@@ -1,0 +1,67 @@
+
+
+Function delrows()
+'        Dim ws3 As Worksheet
+'
+'        Set ws3 = ThisWorkbook.Sheets("GSAM")
+'        ilimit = ws3.UsedRange.Rows.Count
+'        For k = 2 To ilimit
+'            ws3.Cells(2, 1).EntireRow.Delete
+'        Next
+        
+        Worksheets("Plan").Rows(5 & ":" & Worksheets("Plan").Rows.Count).Delete
+
+End Function
+
+ totRows = Sheets("Plan").Range("E" & Sheets("Plan").Rows.Count).End(xlUp).Row
+        
+       Set WB = ThisWorkbook.Sheets("Plan")
+       
+        sRest = ""
+  Jquery = Sheets("Plan").Cells(2, 6)
+  GetUrl = "http://test.jira.services.test.com/jira"
+  Call URLEncode(Jquery, Query)
+  ApiUrl = GetUrl + "/rest/api/2/search?jql=" + Query + "&startAt=" + _
+                        CStr(startAt) + "&maxResults=" + _
+                        CStr(maxResults) & "&fields=customfield_15744,customfield_15628,customfield_15621,customfield_12683,customfield_15725,customfield_11770,customfield_15921,priority,status,key,summary,assignee,reporter,created,resolutiondate,duedate"
+
+'  ApiUrl = GetUrl + "/rest/api/2/search?jql=" + Query + "&startAt=" + _
+'                        CStr(startAt) + "&maxResults=" + _
+'                        CStr(maxResults)
+       
+       With oJiraService
+    .Open "GET", ApiUrl, False
+    .setRequestHeader "Content-Type", "application/json"
+    '.setRequestHeader "Accept", "application/json"
+    .send
+    sRest = .responseText
+    sStatus = .Status & " | " & .statusText
+  End With
+  
+  
+  Function regExpression(ByVal strexp, ByRef strChkval)
+
+     Dim objRegExp As Regexp
+     Set objRegExp = New Regexp
+     objRegExp.IgnoreCase = True
+     objRegExp.Global = True
+     objRegExp.Pattern = "\>(.*?)\<"
+     Set Matches = objRegExp.Execute(strexp)
+     'Get the results by using a For Loop
+     For Each Match In Matches
+         strChkval = Replace(strChkval + Match.Value, ">", "")
+          strChkval = Trim(Left(strChkval, Len(strChkval) - 1))
+     Next
+End Function
+Function sbVBS_To_Delete_EntireColumn_For_Loop()
+    Set iWS = ThisWorkbook.Sheets("LD_Result")
+    lColumn = iWS.UsedRange.Columns.Count
+    For iCntr = 2 To lColumn
+    iWS.Columns(2).EntireColumn.Delete
+    Next
+End Function
+
+  
+  
+  
+  
