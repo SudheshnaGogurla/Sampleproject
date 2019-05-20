@@ -148,10 +148,10 @@ Sub JiaEndToEndReport()
   Dim sFileDataStr As String, sPath As String, sStatus As String
   Set oJiraService = New MSXML2.ServerXMLHTTP60
   
-  'URL = "project =  AND ""POD"" = ""Cash Equities"" AND status = Canceled"
-  'Jquery = "project = REGOPSMII AND Status not in (Canceled, Resolved) AND ""MII Commitment Type"" not in ("UAT Defects") ORDER BY priority DESC, updated DESC"
+  'URL = "project =  AND ""PO"" = ""quities"" AND status = Canceled"
+  'Jquery = "project = prname AND Status not in (Canceled, Resolved) AND ""Commitment Type"" not in ("UAT Defects") ORDER BY priority DESC, updated DESC"
    'ApiUrl = "http://.com/jira/rest/api/2/search?jql=project%20%3D%20REGOPSMII%20AND%20%22MII%20POD%22%20%3D%20%22Cash%20Equities%22%20AND%20status%20%3D%20Canceled&tempMax=1000"
-'  ApiUrl = "http://src.jira.services.gs.com/jira/rest/api/2/search?jql=project%20%3D%20REGOPSMII%20AND%20Status%20not%20in%20%28Canceled%2C%20Resolved%29%20AND%20%22MII%20Commitment%20Type%22%20not%20in%20%28%22UAT%20Defects%22%29%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC&startAt=1&maxResults=1000"
+'  ApiUrl = "http://project.jira.services.tet.com/jira/rest/api/2/search?jql=project%20%3D%20REGOPSMII%20AND%20Status%20not%20in%20%28Canceled%2C%20Resolved%29%20AND%20%22MII%20Commitment%20Type%22%20not%20in%20%28%22UAT%20Defects%22%29%20ORDER%20BY%20priority%20DESC%2C%20updated%20DESC&startAt=1&maxResults=1000"
 '
 
 'Delete Rows
@@ -167,7 +167,7 @@ Call delrows
   
   sRest = ""
   Jquery = Sheets("Plan").Cells(2, 6)
-  GetUrl = "http://src.jira.services.gs.com/jira"
+  GetUrl = "http://test.jira.services.test.com/jira"
   Call URLEncode(Jquery, Query)
   ApiUrl = GetUrl + "/rest/api/2/search?jql=" + Query + "&startAt=" + _
                         CStr(startAt) + "&maxResults=" + _
