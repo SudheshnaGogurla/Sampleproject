@@ -61,7 +61,35 @@ Function sbVBS_To_Delete_EntireColumn_For_Loop()
     Next
 End Function
 
-  
+  Set objMail = CreateObject("CDO.Message")
+Set objConf = CreateObject("CDO.Configuration")
+Set objFlds = objConf.Fields
+
+'Set various parameters and properties of CDO object
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/sendusing") = 2 'cdoSendUsingPort
+'your smtp server domain or IP address goes here such as smtp.yourdomain.com
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/smtpserver") = "LonAnonSMTPRelay.internal.xxx.com" 
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/smtpserverport") = 25 'default port for email
+'uncomment next three lines if you need to use SMTP Authorization
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/sendusername") = "dd@gm.com"
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/sendpassword") = "TestPass"
+objFlds.Item("http://schemas.microsoft.com/cdo/configuration/smtpauthenticate") = 2 'cdoBasic
+objFlds.Update
+objMail.Configuration = objConf
+objMail.From = "dd@gm.com"
+objMail.To = "dd@gm.com"
+objMail.Subject = " Status"
+strMessgaeBody= "Find enclosed invoice status sheet" & vbCrLf 
+'strMessgaeBody= strMessgaeBody+ "Thanks " & vbCrLf 
+"
+objMail.TextBody = strMessgaeBody
+objMail.AddAttachment sTestScript
+objMail.Send
+
+'Set all objects to nothing after sending the email
+Set objFlds = Nothing
+Set objConf = Nothing
+Set objMail = Nothing
   
   
   
