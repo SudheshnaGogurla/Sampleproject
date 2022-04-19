@@ -91,5 +91,108 @@ Set objFlds = Nothing
 Set objConf = Nothing
 Set objMail = Nothing
   
+VBA References
+
+Delete
+
+Sheets("input_JbaCandidateCreation").Range(DeleteRangeJson).ClearContents
+
+
+Count
+
+Sheets("600ExistingDupCandidate").Range("A" & Sheets("600ExistingDupCandidate").Rows.Count).End(xlUp).Row
+
+Open Fetch and delete data
+
+Sub GetandDeleteData()
+
+Application.ScreenUpdating = False
+Dim ogwb As Workbook
+Set ogwb = ThisWorkbook
+Dim wb As Workbook
+Dim rng As Range
+Dim ws As Worksheet
+
+''Calculate no of rows
+strTotalRows = Sheets("Source").Range("A" & Sheets("Source").Rows.Count).End(xlUp).Row
+Mainpath = Sheets("Source").Cells(1, 3)
+
+DeleteRangeJson = "C3:T" & strTotalRows
+
+On Error Resume Next
+Sheets("Source").Range(DeleteRangeJson).ClearContents
+On Error GoTo 0
+
+For intsheets = 3 To strTotalRows
+      
+    countryName = Right(Sheets("Source").Cells(intsheets, 1), 3)
+    scriptName = Sheets("Source").Cells(intsheets, 1)
+    DeleteRowFlag = Sheets("Source").Cells(intsheets, 2)
+    Path = Mainpath & countryName & "\" & scriptName & ".csv"
+    Set wb = Workbooks.Open(Filename:=Path)
+    open_file = wb.Name
+    Set wb = Workbooks(open_file)
+    Set ws = wb.Worksheets(1)
+    LastRow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+    readcolumns = ""
+    If LastRow > 1 Then
+    
+         Intcolumn = 3
+         For i = 1 To 30
+           Output = ws.Cells(LastRow, i).Value
+            If Output <> "" Then
+             ogwb.Activate
+             Sheets("Source").Cells(intsheets, Intcolumn) = Output
+             Intcolumn = Intcolumn + 1
+            End If
+         Next
+         
+         'Delete Last row
+         StrRange = "A" & LastRow
+         If DeleteRowFlag = "Yes" Then
+          ws.Range(StrRange).EntireRow.Delete
+         End If
+    End If
+    wb.Close SaveChanges:=True
+
+Next
+
+MsgBox "Completed"
+
+
+End Sub
+
+'Columncount
+
+colCountInMacro = Sheets("Macro").Cells(intRowcount, Columns.Count).End(xlToLeft).Column
+
+Find row in column
+
+Set rngFound = Sheets("Logins_FE").Columns("A").Find(Trim(countryName), Cells(Rows.Count, "A"), xlValues, xlWhole)
+     RowstartCountryFind = rngFound.Row
+
+After some range second one
+
+Set cell = Sheets("Logins_FE").Range(StrRange).Find(Trim(countryName), After:=Range(AftercellRange))
+        FoundinRow = cell.Row
+        Set cell = Nothing
+Copy range and paste and delete
+
+Sheets("Scalability_Input").Activate
+	Sheets("Scalability_Input").Activate
+lastColumn = Sheets("Scalability_Input").Cells(scalabilityReferenceRow - 1, Columns.Count).End(xlToLeft).Column
+Sheets("Scalability_Input").Range(Cells(scalabilityReferenceRow, "B"), Cells(scalabilityReferenceRow, lastColumn)).Copy
+Sheets("targetsheet").Activate
+Sheets("targetsheet").Range(Cells(2, "B"), Cells(2 + VInSertNum - 1, lastColumn)).Select
+Selection.Insert Shift:=xlDown
+''delete first column
+Sheets("targetsheet").Cells(1, 1).EntireColumn.Delete
+'xRow = xRow + VInSertNum - 1
+''update columnnames
+Sheets("Scalability_Input").Activate
+Sheets("Scalability_Input").Range(Cells(scalabilityReferenceRow - 1, "B"), Cells(scalabilityReferenceRow - 1, lastColumn)).Copy
+Sheets("targetsheet").Activate
+Sheets("targetsheet").Range(Cells(1, "A"), Cells(1, lastColumn)).Select
+Selection.Insert Shift:=xlToRight
   
   
