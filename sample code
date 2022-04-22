@@ -199,3 +199,45 @@ Selection.Insert Shift:=xlToRight
 =IFERROR(VLOOKUP(G2,$B$2:$D$10000,MATCH(H$1,$B$1:$D$1,0),0),"No Data Exists")
 =IFERROR(VLOOKUP(G2,$B$2:$D$10000,MATCH(I$1,$B$1:$D$1,0),0),"No Data Exists")
 https://github.com/Salmankadiwal/Advanced-Excel-Formulas-and-Functions
+
+Azure Devops
+  apiURL = "https://dev.azure.com/xxxx/xxx/_apis/pipelines?api-version=6.1-preview.1"
+    'apiURL = "https://dev.azure.com/pagegroup-groupservices/Global Page Test Automation/_apis/pipelines/260/runs?api-version=6.1-preview.1"
+    'Set objHTTP = New MSXML2.ServerXMLHTTP60
+    Set objHTTP = CreateObject("MSXML2.ServerXMLHTTP")
+    objHTTP.Open "GET", apiURL, False
+    objHTTP.setRequestHeader "Content-Type", "application/json"
+    objHTTP.setRequestHeader "Accept", "application/json"
+    objHTTP.setRequestHeader "Authorization", "Basic " & encodeBase64_1(JIRA_USER & ":" & JIRA_PWD)
+    objHTTP.send
+    responseText = objHTTP.responseText
+    sStatus = objHTTP.Status & " | " & objHTTP.statusText
+    Call PipelineName(responseText, "name")
+    Call PipelineNumber(responseText, "id")
+
+Public Function PipelineNumber(ByVal strText, ByVal strCheck)
+    Dim objRegexp As RegExp
+    Set objRegexp = New RegExp
+    objRegexp.IgnoreCase = True
+    objRegexp.Global = True
+    'strText = Sheets("Data").Cells(1, 1)
+    'strCheck = "id"
+    strcheckexpression = "" & strCheck & """" & ":([\s\S]+?),"
+    objRegexp.Pattern = strcheckexpression
+    Set matches = objRegexp.Execute(strText)
+    rowno = 2
+    For Each Match In matches
+        strReturnValue = Match.Value
+        strReturnValue = Replace(strReturnValue, strText, "")
+        strReturnValue = Replace(strReturnValue, """", "")
+        strReturnValue = Replace(strReturnValue, ":", "")
+        strReturnValue = Replace(strReturnValue, ",", "")
+        strReturnValue = Replace(strReturnValue, " ", "")
+        strReturnValue = Replace(strReturnValue, "id", "")
+        Sheets("PipeLines").Cells(rowno, 2) = strReturnValue
+      rowno = rowno + 1
+    Next
+
+    Set objRegexp = Nothing
+End Function
+
