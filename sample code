@@ -289,4 +289,19 @@ objRegExp.Pattern = "\<td class(.*?)\</tr>"
 
 objRegExp.Pattern = <br/><h4>Provided Input</h4>([\s\S]*?)<br/><br/><h4>Expected Output</h4>"
 re2.Pattern = "(<br>|\s)+"
+objRegExp.Pattern = "\>(.*?)\
+objRegExp.Pattern = "\>(.*?)\<"
+
+objRegExp.Pattern = "<\s*td[^>]*>(.*?)<\s*/\s*td>"
+
+objRegExp.Pattern = "\<td class(.*?)\</tr>"
+
+objRegExp.Pattern = <br/><h4>Provided Input</h4>([\s\S]*?)<br/><br/><h4>Expected Output</h4>"
+re2.Pattern = "(<br>|\s)+"
+'
+textRegExp.Pattern = "\s{0,}(\S{1}[\s,\S]*\S{1})\s{0,}"
+objRegexp.Pattern = """displayName"":(.*?""created"":([{\s\S]+?}]))"
+strcheckexpression = """" & strCheck & """" & ":([\s\S]+?)"""
+objRegExp.Pattern = "<[^>]+>"
+objRegExp.Pattern = "\>(.*?)\<"
 '
