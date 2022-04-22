@@ -240,4 +240,44 @@ Public Function PipelineNumber(ByVal strText, ByVal strCheck)
 
     Set objRegexp = Nothing
 End Function
+StartTime = Timer
+MinutesElapsed = Format((Timer - StartTime) / 86400, "hh:mm:ss")
+
+Call ReturnResult(responseText, "result", output)
+Public Function ReturnResult(ByVal strText, ByVal strCheck, ByRef strReturnResult)
+    Dim objRegexp As RegExp
+    Set objRegexp = New RegExp
+    objRegexp.IgnoreCase = True
+    objRegexp.Global = True
+
+    strcheckexpression = "" & strCheck & """" & ":([\s\S]+?),"
+    objRegexp.Pattern = strcheckexpression
+    Set matches = objRegexp.Execute(strText)
+
+    For Each Match In matches
+        strReturnValue = Match.Value
+        strReturnValue = Replace(strReturnValue, strText, "")
+        strReturnValue = Replace(strReturnValue, """", "")
+        strReturnValue = Replace(strReturnValue, ":", "")
+        strReturnValue = Replace(strReturnValue, ",", "")
+        strReturnValue = Replace(strReturnValue, " ", "")
+        strReturnValue = Replace(strReturnValue, strCheck, "")
+        If strCheck = "createdDate" Then
+        Exit For
+        End If
+       
+        If InStr(strReturnValue, "succeeded") > 0 Then
+           strFound = True
+           Exit For
+        End If
+        If InStr(strReturnValue, "failed") > 0 Then
+           strFound = True
+           Exit For
+        End If
+    Next
+    strReturnResult = strReturnValue
+
+    Set objRegexp = Nothing
+End Function
+
 
