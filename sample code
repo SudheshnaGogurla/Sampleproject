@@ -280,4 +280,13 @@ Public Function ReturnResult(ByVal strText, ByVal strCheck, ByRef strReturnResul
     Set objRegexp = Nothing
 End Function
 
+objRegExp.Pattern = "\>(.*?)\
+objRegExp.Pattern = "\>(.*?)\<"
 
+objRegExp.Pattern = "<\s*td[^>]*>(.*?)<\s*/\s*td>"
+
+objRegExp.Pattern = "\<td class(.*?)\</tr>"
+
+objRegExp.Pattern = <br/><h4>Provided Input</h4>([\s\S]*?)<br/><br/><h4>Expected Output</h4>"
+re2.Pattern = "(<br>|\s)+"
+'
