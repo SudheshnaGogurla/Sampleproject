@@ -3,6 +3,13 @@
 =IFERROR(VLOOKUP(F2,$A$2:$B$10000,MATCH(G$1,$A$1:$B$1,0),0),"No Data Exists")
 Sheets("VBAAPI").ComboBox1.Value
 
+Set rngFound = Sheets("Macro").Columns("A").Find("TargetCSVNAME", Cells(Rows.Count, "A"), xlValues, xlWhole)
+RowstartHeaderNo = rngFound.Row
+
+Set cell = Sheets("Logins").Range("A1:DQ1").Find(Trim(columnUpdate), SearchOrder:=xlColumns)
+ SourceColumnIndex = cell.Column
+
+
 Function delrows()
 '        Dim ws3 As Worksheet
 '
@@ -307,4 +314,83 @@ objRegexp.Pattern = """displayName"":(.*?""created"":([{\s\S]+?}]))"
 strcheckexpression = """" & strCheck & """" & ":([\s\S]+?)"""
 objRegExp.Pattern = "<[^>]+>"
 objRegExp.Pattern = "\>(.*?)\<"
-'
+'open CSV and update other open excel
+
+Sub GetandDeleteData()
+
+Application.ScreenUpdating = False
+Dim ogwb As Workbook
+Set ogwb = ThisWorkbook
+Dim wb As Workbook
+Dim rng As Range
+Dim ws As Worksheet
+
+''Calculate no of rows
+strTotalRows = Sheets("Source").Range("A" & Sheets("Source").Rows.Count).End(xlUp).Row
+Mainpath = Sheets("Source").Cells(1, 4)
+
+DeleteRangeJson = "D3:T" & strTotalRows
+
+On Error Resume Next
+Sheets("Source").Range(DeleteRangeJson).ClearContents
+On Error GoTo 0
+
+For intsheets = 3 To strTotalRows
+      
+    countryname = Right(Sheets("Source").Cells(intsheets, 1), 3)
+    scriptName = Sheets("Source").Cells(intsheets, 1)
+    DeleteRowFlag = Sheets("Source").Cells(intsheets, 2)
+    DataFetchFlag = Sheets("Source").Cells(intsheets, 3)
+    splitname = Split(scriptName, "_")
+    Script = splitname(0)
+    country = splitname(1)
+    
+    If DataFetchFlag = "Yes" Then
+    'C:\Performance\Scripts\ScalabilityUI\ScalabilityUI-DataGenerator_AE\AccountUpdate\Output\AccountUpdate.csv
+    'C:\Performance\Scripts\ScalabilityUI_AE\AccountUpdate_AE.csv
+    'Path = Mainpath & countryname & "\" & scriptName & ".csv"
+            Path = Mainpath & countryname & "\" & Script & "\Output\" & Script & ".csv"
+            Set wb = Workbooks.Open(Filename:=Path)
+            open_file = wb.Name
+            Set wb = Workbooks(open_file)
+            Set ws = wb.Worksheets(1)
+            LastRow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+            readcolumns = ""
+            If LastRow > 1 Then
+            
+                 Intcolumn = 4
+                 For i = 1 To 30
+                   Output = ws.Cells(LastRow, i).Value
+                    If Output <> "" Then
+                     ogwb.Activate
+                     Sheets("Source").Cells(intsheets, Intcolumn) = Output
+                     Intcolumn = Intcolumn + 1
+                    End If
+                 Next
+                 
+                 'Delete Last row
+                 StrRange = "A" & LastRow
+                 If DeleteRowFlag = "Yes" Then
+                  ws.Range(StrRange).EntireRow.Delete
+                 End If
+            End If
+            wb.Close SaveChanges:=True
+   End If
+Next
+
+MsgBox "Completed"
+''replace all
+
+LastRow = ws.Cells(Rows.Count, "A").End(xlUp).Row
+            lColumn = ws.Cells.Range("A1").End(xlToRight).Column
+            ColumnLetter = Split(ws.Cells(1, Columns.Count).End(xlToLeft).Address, "$")(1)
+            StrRangeSearch = "A2:" & ColumnLetter & LastRow
+            Set rng = ws.Range(StrRangeSearch)
+            
+            ws.UsedRange.Replace What:="London2022@@@", Replacement:="London2022@@@@"
+
+
+End Sub
+
+
+
