@@ -513,4 +513,12 @@ Function OpenTextFile$(f)
     End With
 End Function
 
-
+DeleteRangeJson = "A1:M50000"
+On Error Resume Next
+Sheets("test").Range(DeleteRangeJson).ClearContents
+On Error GoTo 0
+mainworkBook.Sheets("OrgDup600").UsedRange.Copy
+mainworkBook.Sheets("test").Select
+mainworkBook.Sheets("test").Range("A1").Select
+mainworkBook.Sheets("test").Paste
+mainworkBook.Sheets("test1").Select
