@@ -1,3 +1,8 @@
+https://dev.azure.com/xxx/xxx/_apis/test/plans?api-version=5.0
+https://dev.azure.com/xxx/xxx/_apis/test/Plans/TESTSUITEID/suites?$expand={$expand}&$skip={$skip}&$top={$top}&$asTreeView={$asTreeView}&api-version=5.0
+https://dev.azure.com/xxx/xxx/_apis/test/Plans/TESTSUITEID/Suites/TESTCASEID/testcases
+https://dev.azure.com/xxx/xxx/_apis/test/Plans/PLANID/Suites/SUITEID/points?api-version=6.0
+
 'Option Explicit
 Private p&, token, dic
 Sub azure_TestPaln()
