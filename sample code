@@ -535,3 +535,46 @@ mainworkBook.Sheets("test").Select
 mainworkBook.Sheets("test").Range("A1").Select
 mainworkBook.Sheets("test").Paste
 mainworkBook.Sheets("test1").Select
+
+
+
+'JGDJSS Desinged by Deepak Lohia
+Option Explicit
+
+
+Private Sub btn_GetHTMLData_Click()
+
+Dim HTMLDoc As HTMLDocument  'ref microsoft HTML Object Lib
+Dim Doc As HTMLDocument
+Dim WS As Worksheet
+Dim i As Long
+Dim j As Long
+Dim URL As String
+Dim IE As MSXML2.XMLHTTP60  ' ref microsoft xml
+
+Set IE = New MSXML2.XMLHTTP60
+
+Set WS = ThisWorkbook.Sheets("Data")
+
+URL = WS.Range("B2").Value
+                       
+On Error Resume Next
+
+IE.Open "GET", "https://en.wikipedia.org/wiki/Wiki", False
+IE.send
+            
+If IE.Status <> 200 Then GoTo ErrH:
+While IE.readyState <> 4: DoEvents: Wend
+    
+WS.Range("B3").Value = Trim(IE.responseText)
+
+Set IE = Nothing
+
+MsgBox "Done", vbInformation
+
+Exit Sub
+ErrH:
+MsgBox Err.Number & ":" & Err.Description
+ 
+End Sub
+
