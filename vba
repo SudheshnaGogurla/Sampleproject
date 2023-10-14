@@ -3,6 +3,14 @@ https://dev.azure.com/xxx/xxx/_apis/test/Plans/TESTSUITEID/suites?$expand={$expa
 https://dev.azure.com/xxx/xxx/_apis/test/Plans/TESTSUITEID/Suites/TESTCASEID/testcases
 https://dev.azure.com/xxx/xxx/_apis/test/Plans/PLANID/Suites/SUITEID/points?api-version=6.0
 
+  String filePath = getResourcePath(fileName);
+        System.out.println("filePath forupload is "+ filePath);        
+        WebElement element = Parq.getDriver().findElement(By.xpath("//input[@type='file']"));            				
+		LocalFileDetector detector = new LocalFileDetector();
+		((RemoteWebElement)element).setFileDetector(detector);		
+		System.out.println("filePath is "+ filePath);
+		element.sendKeys(detector.getLocalFile(filePath).getAbsolutePath());
+
 'Option Explicit
 Private p&, token, dic
 Sub azure_TestPaln()
