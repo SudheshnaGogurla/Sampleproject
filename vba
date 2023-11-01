@@ -1000,3 +1000,39 @@ Private Sub Class_Terminate()
     Set dict_pDictionary = Nothing
 #End If
 End Sub
+Set objHTTP = CreateObject("MSXML2.ServerXMLHTTP")
+    objHTTP.Open "GET", Url, False
+    objHTTP.setRequestHeader "Content-Type", "application/json"
+    objHTTP.setRequestHeader "Accept", "application/json"
+    objHTTP.setRequestHeader "Authorization", "Basic " & EncodeBase64(UserName & ":" & token)
+    objHTTP.send
+    json$ = objHTTP.responseText
+
+Dim http As Object, html As New HTMLDocument, topics As Object, titleElem As Object, detailsElem As Object, topic As HTMLHtmlElement
+Dim i As Integer
+Set request = CreateObject("MSXML2.ServerXMLHTTP")
+    
+    Dim converter As New ADODB.stream
+    
+
+    ' fetch page
+    request.Open "GET", Url, False
+    request.setRequestHeader "Authorization", "Basic " & EncodeBase64(UserName & ":" & token)
+    request.send
+
+    ' write raw bytes to the stream
+    converter.Open
+    converter.Type = adTypeBinary
+    converter.Write request.responseBody
+    
+    converter.SaveToFile "location", 2
+
+    ' read text characters from the stream
+    converter.Position = 0
+    converter.Type = adTypeText
+    converter.Charset = "Windows-1251"
+
+    ' set return value, close the stream
+    GetHTML = converter.ReadText
+    converter.Close
+
