@@ -1036,3 +1036,47 @@ Set request = CreateObject("MSXML2.ServerXMLHTTP")
     GetHTML = converter.ReadText
     converter.Close
 
+
+
+[1:34 PM] Ramu Gogurla
+Function drawborder(ByVal strRange)
+ 
+    Dim rRng As Range
+ 
+    Set rRng = sheets("Generate Report").Range(strRange)
+
+    rRng.WrapText = True
+ 
+    'Clear existing
+
+    rRng.Borders.LineStyle = xlNone
+ 
+    'Apply new borders
+
+    rRng.BorderAround xlContinuous
+
+    rRng.Borders(xlInsideHorizontal).LineStyle = xlContinuous
+
+    rRng.Borders(xlInsideVertical).LineStyle = xlContinuous
+
+    rRng.EntireColumn.AutoFit
+
+    rRng.EntireRow.AutoFit
+
+    Set rRng = Nothing
+ 
+End Function
+[1:35 PM] Ramu Gogurla
+generateReport.Range("B6:N50000").Interior.ColorIndex = 0
+[1:35 PM] Ramu Gogurla
+Application.ScreenUpdating = False
+Application.EnableEvents = False
+Application.Calculation = xlCalculationManual
+ActiveSheet.DisplayPageBreaks = False
+
+Sheets("xx").Cells(ResultupdateRowstart, 12) = "Pass " & sStatus
+          Sheets("xx").Cells(ResultupdateRowstart, 12).Interior.ColorIndex = 4
+          Else
+          Sheets("x").Cells(ResultupdateRowstart, 12) = "Fail" & sStatus
+          Sheets("xx").Cells(ResultupdateRowstart, 12).Interior.ColorIndex = 3
+
