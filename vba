@@ -1063,6 +1063,39 @@ Function drawborder(ByVal strRange)
 
     rRng.EntireRow.AutoFit
 
+
+ Dim http As Object, html As New HTMLDocument, topics As Object, titleElem As Object, detailsElem As Object, topic As HTMLHtmlElement
+ Dim i As Integer
+ Dim oStream As Object
+ Dim hasImage_column As Range
+
+    Set http = CreateObject("MSXML2.ServerXMLHTTP")
+    url = "https://xxe.png"
+    http.Open "GET", "url ", False
+    http.setRequestHeader "Authorization", "Basic " & EncodeBase64(UserName & ":" & token)
+    http.send
+    If http.Status = 200 Then
+        Set oStream = CreateObject("ADODB.Stream")
+        oStream.Open
+        oStream.Type = 1
+        oStream.Write http.responseBody
+        oStream.SaveToFile "c:\zz\test1.jpg", 2
+        oStream.Close
+    End If
+    
+    Set image_column = Worksheets(1).Range("A1:H22")
+    
+    
+    Set shape = Sheets("Images").Shapes.AddPicture(locationToSave, msoFalse, msoTrue, 0, 0, 100, 100)
+                
+        With shape
+            .Left = image_column.Cells(1).Left
+            .Top = image_column.Cells(1).Top
+            .Height = 500
+            .Width = 500
+            'image_column.Cells(1).EntireRow.RowHeight = .Height
+        End With
+
     Set rRng = Nothing
  
 End Function
