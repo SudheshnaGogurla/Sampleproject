@@ -605,7 +605,20 @@ For Each Module In moduleNames
    Next topic
   Next Module
   
-
+Set obj_tbl = HTMLDoc.getElementsByClassName("container-fluid")
+            Row = 1
+            col = 1
+            For Each tbl In obj_tbl
+                    Set TR = tbl.getElementsByTagName("TR")
+                    For Each obj_row In TR
+                        For Each TD In obj_row.getElementsByTagName("TD")
+                            Sheets("Debug").Cells(Row, col) = TD.innerText
+                            col = col + 1
+                        Next
+                        col = 1
+                        Row = Row + 1
+                    Next
+            Next
 Function jenkinsConnect(ByVal Url, ByRef HTMLDoc As HTMLDocument) As HTMLElementCollection
  Dim http As Object, html As New HTMLDocument, topics As Object, titleElem As Object, detailsElem As Object, topic As HTMLHtmlElement
  Dim i As Integer
