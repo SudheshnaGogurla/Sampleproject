@@ -581,3 +581,102 @@ MsgBox Err.Number & ":" & Err.Description
  
 End Sub
 
+
+Dim HTMLDoc As New HTMLDocument
+Dim HTMLDoc1 As New HTMLDocument
+Dim myTable As HTMLElementCollection
+Set myTable = jenkinsConnect(Url, HTMLDoc)
+Set ErrorMessages = HTMLDoc.getElementsByClassName("steps inner-level")
+Set FailedScenario = HTMLDoc.getElementsByClassName("brief failed")
+Set tags = HTMLDoc.getElementsByClassName("tags indention")
+Set obj_tbl = HTMLDoc.getElementsByClassName("xx")
+For Each Scenario In FailedScenario
+ Scenario.innerText
+Next
+
+ Set moduleNames = HTMLDoc.getElementsByClassName("jenkins-table  sortable")
+
+For Each Module In moduleNames
+   For Each topic In Module.getElementsByTagName("span")
+     If topic.innerText <> "" Then
+        RowCount = Sheets(sheetname).Range("C" & Rows.Count).End(xlUp).Row
+        Sheets(sheetname).Cells(RowCount + 1, 3) = topic.innerText
+      End If
+   Next topic
+  Next Module
+  
+
+Function jenkinsConnect(ByVal Url, ByRef HTMLDoc As HTMLDocument) As HTMLElementCollection
+ Dim http As Object, html As New HTMLDocument, topics As Object, titleElem As Object, detailsElem As Object, topic As HTMLHtmlElement
+ Dim i As Integer
+    UserName = "xxx"
+    token = xx
+    Set http = CreateObject("MSXML2.ServerXMLHTTP")
+    http.Open "GET", Url, False
+    http.setRequestHeader "Content-Type", "application/json"
+    http.setRequestHeader "Accept", "application/json"
+    http.setRequestHeader "Authorization", "Basic " & EncodeBase64(UserName & ":" & token)
+    http.send
+    HTMLDoc.body.innerHTML = http.responseText
+   
+End Function
+
+Function stringFind(ByVal exptest, ByVal text As String)
+
+exptest = removeTrialingSpaces(exptest)
+
+'Dim result As String
+Dim allMatches As Object
+Dim RE As Object
+Set RE = CreateObject("vbscript.regexp")
+
+RE.Pattern = exptest
+RE.Global = True
+RE.IgnoreCase = True
+Set allMatches = RE.Execute(text)
+stringFind = allMatches.Count
+
+If stringFind = 0 Then
+    If InStr(text, exptest) <> 0 Then
+       stringFind = InStr(text, exptest)
+    End If
+End If
+
+Set allMatches = Nothing
+Set RE = Nothing
+
+End Function
+
+Function removeTrialingSpaces(ByVal exptest)
+    Dim RE As Object, ResultString As String
+    Set RE = CreateObject("vbscript.regexp")
+    RE.MultiLine = True
+    RE.Global = True
+    RE.Pattern = "^[\s\xA0]+|[\s\xA0]+$"
+    removeTrialingSpaces = RE.Replace(exptest, "")
+    Set RE = Nothing
+End Function
+
+Function ReturnBuildNo(ByVal strText, ByVal strCheck, ByRef strReturnResult)
+    Dim objRegexp As RegExp
+    Set objRegexp = New RegExp
+    objRegexp.IgnoreCase = True
+    objRegexp.Global = True
+    strcheckexpression = "\[CucumberReport(.*?)\.json"
+    objRegexp.Pattern = strcheckexpression
+    Set matches = objRegexp.Execute(strText)
+    For Each match In matches
+        strReturnValue = match.Value
+    Next
+      If strReturnValue <> "" Then
+        splitBuild = Split(strReturnValue, "builds")
+        splithtml = Split(splitBuild(1), "/cucumber-html-reports")
+        buildNo = Replace(splithtml(0), "/", "")
+        strReturnResult = buildNo
+    End If
+    Set objRegexp = Nothing
+End Function
+
+
+
+
