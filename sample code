@@ -690,6 +690,16 @@ Function ReturnBuildNo(ByVal strText, ByVal strCheck, ByRef strReturnResult)
     Set objRegexp = Nothing
 End Function
 
-
+financials > Income statement >> Net Income >> For last 3 years
+financials > Income statement >> Basic EPS >> For last 3 years
+financials > Balance sheet >>  Total stockholders' equity >> For last 3 years
+financials > Balance sheet >>  Total liabilities >> For last 3 years
+financials > Balance sheet >>  liabilities >>  Current liabilities >> Total current liabilities >> last 3 years (NOTE - This is not always available)
+financials > Balance sheet >>  Assets >>  Current Assets >> Total current assets >> last 3 years (NOTE - This is not always available)
+financials > Balance sheet >>  Assets >>  Total Assets last 3 yearshttps://uk.finance.yahoo.com/quote/BAC/cash-flow 
+Net cash provided by operating activities >> for past 3 years incl ttm
+Net cash used for investing activities  >> for past 3 years incl ttm
+Net cash used provided by (used for) financing activities  >> for past 3 years incl ttm
+Free cash flow  >>for past 3 years incl ttm
 
 
