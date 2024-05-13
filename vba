@@ -1097,6 +1097,29 @@ Function drawborder(ByVal strRange)
             'image_column.Cells(1).EntireRow.RowHeight = .Height
         End With
 
+
+Sub updateJsonRunTime()
+    Dim rng As Range, Items As New Collection, myitem As New Dictionary, i As Integer, cell As Variant, myfile As String
+    Dim FSO As New FileSystemObject
+    Dim buss As String
+    Dim JsonTS As TextStream
+    'Set rng = Sheets("json").Cells(1, 1)
+    Set JsonTS = FSO.OpenTextFile("xxx\json.json", ForReading)
+    JsonText = JsonTS.ReadAll
+    JsonTS.Close
+     Dim JSON As Object
+    Set JSON = ParseJSON(JsonText)
+    'Debug.Print JsonText
+    'Debug.Print json("root").Count
+    
+     Debug.Print JSON("data")("site")
+    JSON("data")("site") = "9999"
+    myfile = "xxx\output.json"
+    Open myfile For Output As #1
+    Print #1, JsonConverter.ConvertToJson(JSON, Whitespace:=2)
+    Close #1
+End Sub
+
     Set rRng = Nothing
  
 End Function
