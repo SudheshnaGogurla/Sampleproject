@@ -700,6 +700,11 @@ Function ReturnBuildNo(ByVal strText, ByVal strCheck, ByRef strReturnResult)
     Set objRegexp = Nothing
 End Function
 
+Screenshot attached to excel link
+
+ Sheets("Sheets").Hyperlinks.Add Anchor:=Sheets("Sheets").Cells(scenariomatch, 8), Address:=filePath, TextToDisplay:="ScreeenSHOT"
+                     
+
 financials > Income statement >> Net Income >> For last 3 years
 financials > Income statement >> Basic EPS >> For last 3 years
 financials > Balance sheet >>  Total stockholders' equity >> For last 3 years
