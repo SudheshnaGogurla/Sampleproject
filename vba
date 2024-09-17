@@ -1137,3 +1137,13 @@ Sheets("xx").Cells(ResultupdateRowstart, 12) = "Pass " & sStatus
           Sheets("x").Cells(ResultupdateRowstart, 12) = "Fail" & sStatus
           Sheets("xx").Cells(ResultupdateRowstart, 12).Interior.ColorIndex = 3
 
+PivotWs.Select
+Set PTSuppBase = ActiveSheet.PivotTables("PivotTable1")
+PTSuppBase.RefreshTable
+With PTSuppBase
+    .DataBodyRange.HorizontalAlignment = xlLeft
+    '.ColumnRange.HorizontalAlignment = xlLeft
+    .TableStyle2 = "PivotStyleMedium20"
+    .DataBodyRange.WrapText = True
+    .TableRange1.Columns.AutoFit
+End With
