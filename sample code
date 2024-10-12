@@ -703,6 +703,25 @@ End Function
 Screenshot attached to excel link
 
  Sheets("Sheets").Hyperlinks.Add Anchor:=Sheets("Sheets").Cells(scenariomatch, 8), Address:=filePath, TextToDisplay:="ScreeenSHOT"
+
+import groovy.json.JsonSlurper 
+import org.apache.commons.lang.StringUtils;
+def slurper = new JsonSlurper()
+log.info("Response time of the last request " + prev.getResponseCode())
+log.info("Response time of the last request " + prev.getResponseDataAsString())
+def parsedJson = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+// Extract the text between square brackets
+def subject = parsedJson.fieldValues;
+log.info("subject are " + subject);
+ 
+if (match1 = subject =~ / (?=applicant_name:xxx LTD.).*?(?=alertingEventId)(.+?,)/) {		
+  log.info("cookieValue =========================" + match1.group(1)); 
+}
+ 
+String replacedStr = match1.group(1).replaceAll("alertingEventId:", "");
+String alertID = replacedStr.substring(0, replacedStr.length() - 1);
+ 
+log.info("alertID =========================" + alertID);
                      
 
 financials > Income statement >> Net Income >> For last 3 years
