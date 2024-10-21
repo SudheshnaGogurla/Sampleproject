@@ -734,6 +734,28 @@ for(x in app_ref){
 	var secondSplit = x.split(",")
 	log.info("app_ref is " + app_ref[0]);
 }
+
+
+import org.apache.commons.io.FileUtils
+import java.nio.charset.StandardCharsets
+
+// Парсим JSON из ответа предыдущего запроса
+def response = prev.getResponseDataAsString()
+def jsonSlurper = new JsonSlurper()
+def jsonResponse = jsonSlurper.parseText(response)
+
+def ids = jsonResponse.data.collect { it.id }
+def file = new File("ids.csv")
+
+
+if (file.exists()) {
+    file.delete()
+}
+
+FileUtils.writeStringToFile(file, "id\n", StandardCharsets.UTF_8) 
+ids.each { id ->
+    FileUtils.writeStringToFile(file, "${id}\n", StandardCharsets.UTF_8, true) 
+}
                      
 
 financials > Income statement >> Net Income >> For last 3 years
