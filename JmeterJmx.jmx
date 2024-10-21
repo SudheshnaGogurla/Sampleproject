@@ -1,0 +1,1214 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.6.3">
+  <hashTree>
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan">
+      <elementProp name="TestPlan.user_defined_variables" elementType="Arguments" guiclass="ArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+        <collectionProp name="Arguments.arguments">
+          <elementProp name="jmeter.test.home" elementType="Argument">
+            <stringProp name="Argument.name">jmeter.test.home</stringProp>
+            <stringProp name="Argument.value">${__BeanShell(import org.apache.jmeter.services.FileServer; FileServer.getFileServer().getBaseDir();)}${__BeanShell(File.separator,)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="projectHome" elementType="Argument">
+            <stringProp name="Argument.name">projectHome</stringProp>
+            <stringProp name="Argument.value">${__BeanShell(import org.apache.jmeter.services.FileServer; FileServer.getFileServer().getBaseDir();)}</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="scriptHome" elementType="Argument">
+            <stringProp name="Argument.name">scriptHome</stringProp>
+            <stringProp name="Argument.value">$&quot;{projectHome}&quot;/MuleSoftJmeter</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+        </collectionProp>
+      </elementProp>
+      <boolProp name="TestPlan.functional_mode">false</boolProp>
+      <boolProp name="TestPlan.serialize_threadgroups">false</boolProp>
+    </TestPlan>
+    <hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Jmeter">
+        <intProp name="ThreadGroup.num_threads">1</intProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller">
+          <intProp name="LoopController.loops">-1</intProp>
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+        </elementProp>
+      </ThreadGroup>
+      <hashTree>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="xx_${Country}_${test.id}_row">
+          <boolProp name="displayJMeterProperties">false</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">false</boolProp>
+        </DebugSampler>
+        <hashTree>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="Environment Config">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters">1 1000000</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">
+if(vars.get(&quot;Environment&quot;).equals(&quot;SIT&quot;)){
+  vars.put(&quot;CompanyIdvalue&quot;,vars.get(&quot;CompanyId&quot;));
+}
+
+if(vars.get(&quot;Environment&quot;).equals(&quot;SIT&quot;)){
+	vars.put(&quot;ApplicationDetails&quot;,&quot;https://xxx/&quot;);
+     vars.put(&quot;xx&quot;,&quot;xxcom&quot;);
+     log.info(&quot;xx is ---&gt;&quot; + SAApplServer);
+     String SASApplPathURL = &quot;xx&quot; + vars.get(&quot;CompanyId&quot;) + &quot;/xx&quot;;	
+}
+
+csvUpdate=&quot;TRUE&quot;;
+vars.put(&quot;csvUpdate&quot;,csvUpdate);
+
+
+
+</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+          <CSVDataSet guiclass="TestBeanGUI" testclass="CSVDataSet" testname="Reading Data from CSV">
+            <stringProp name="filename">${jmeter.test.home}\\Data\\xx.csv</stringProp>
+            <stringProp name="fileEncoding"></stringProp>
+            <stringProp name="variableNames"></stringProp>
+            <boolProp name="ignoreFirstLine">true</boolProp>
+            <stringProp name="delimiter">,</stringProp>
+            <boolProp name="quotedData">true</boolProp>
+            <boolProp name="recycle">false</boolProp>
+            <boolProp name="stopThread">true</boolProp>
+            <stringProp name="shareMode">shareMode.all</stringProp>
+          </CSVDataSet>
+          <hashTree/>
+          <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters">1 1000000</stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">//------------------------------------------------
+//Reading and intiating the  flags from CSV file
+//------------------------------------------------
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+
+String firstDirectorFlag=vars.get(&quot;FirstDirector&quot;);
+vars.put(&quot;firstDirectorFlag&quot;,firstDirectorFlag);
+
+String secondDirectorFlag=vars.get(&quot;SecondDirector&quot;);
+vars.put(&quot;secondDirectorFlag&quot;,secondDirectorFlag);
+
+String thirdDirectorFlag=vars.get(&quot;ThirdDirector&quot;);
+vars.put(&quot;thirdDirectorFlag&quot;,thirdDirectorFlag);
+
+String fourthDirectorFlag=vars.get(&quot;FourthDirector&quot;);
+vars.put(&quot;fourthDirectorFlag&quot;,fourthDirectorFlag);
+
+String fifthDirectorFlag=vars.get(&quot;FifthDirector&quot;);
+vars.put(&quot;fifthDirectorFlag&quot;,fifthDirectorFlag);
+
+String sixthDirectorFlag=vars.get(&quot;SixthDirector&quot;);
+vars.put(&quot;sixthDirectorFlag&quot;,sixthDirectorFlag);
+
+//ApplicationSubmittedDTM
+String timeforrequest = &quot;${__time(yyyy-MM-dd&apos;T&apos;hh:mm:ss)}&quot;;
+vars.put(&quot;ApplicationSubmittedDTM&quot;,timeforrequest);
+log.info(&quot;ApplicationSubmittedDTM is --&gt; &quot; +vars.get(&quot;ApplicationSubmittedDTM&quot;));
+
+String timeforrequest1 = &quot;${__time(yyyy-MM-dd&apos;T&apos;hh:mm:ss)}&quot;;
+vars.put(&quot;ApplicationReceivedDTM&quot;,timeforrequest1);
+log.info(&quot;ApplicationReceivedDTM is --&gt; &quot; +vars.get(&quot;ApplicationReceivedDTM&quot;));
+
+//SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;hh:mm:ss&quot;);
+//Date before = sdf.parse(timeforrequest);
+//Calendar cal = Calendar.getInstance();
+//cal.setTime(before);
+//cal.add(Calendar.HOUR, 0);
+//Date after = cal.getTime();
+//String ApplicationSubmitted = sdf.format(after);
+//log.info(&quot;ApplicationSubmitted is &quot; +ApplicationSubmitted);
+//vars.put(&quot;ApplicationSubmittedDTM&quot;,ApplicationSubmitted);
+//
+////ApplicationReceivedDTM
+//String timeforrequest1 = &quot;${__time(yyyy-MM-dd&apos;T&apos;hh:mm:ss)}&quot;;
+//SimpleDateFormat sdf1 = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;hh:mm:ss&quot;);
+//Date before1 = sdf1.parse(timeforrequest1);
+//Calendar cal1 = Calendar.getInstance();
+//cal1.setTime(before1);
+//cal1.add(Calendar.HOUR, 0);
+//Date after1 = cal1.getTime();
+//String ApplicationReceived = sdf1.format(after1);
+//vars.put(&quot;ApplicationReceivedDTM&quot;,ApplicationReceived);
+//log.info(&quot;ApplicationReceivedDTM is &quot; +ApplicationReceivedDTM);
+
+
+
+//SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;hh:mm:ss&quot;);
+//Date firstParsedDate = dateFormat.parse(ApplicationSubmittedDTM);
+//Date secondParsedDate = dateFormat.parse(ApplicationReceivedDTM);
+//long diff = secondParsedDate.getTime() - firstParsedDate.getTime();
+//log.info(&quot;diff is &quot; +diff);
+//
+//
+//long hours = diff / (1000 * 60 * 60);
+//long minutes = (diff - hours * 1000 * 60 * 60) / (1000 * 60);
+////log.info(&quot;minutes are &quot; +minutes);
+//long seconds = (diff - hours * 1000 * 60 * 60 - minutes * 1000 * 60) / 10000;
+
+
+csvUpdate=&quot;TRUE&quot;;
+vars.put(&quot;csvUpdate&quot;,csvUpdate);
+</stringProp>
+          </BeanShellPreProcessor>
+          <hashTree/>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="xx_${Country}_${test.id}">
+          <stringProp name="IfController.condition">${__javaScript(&quot;${firstDirectorFlag}&quot; == &quot;TRUE&quot;)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="HTTP Request - Microsoft Token_${Country}_${test.id}" enabled="true">
+            <stringProp name="HTTPSampler.domain">${serverName}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.path">${serverPath}</stringProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments">
+                <elementProp name="client_id" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.value">${clientid}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">client_id</stringProp>
+                  <stringProp name="HTTPArgument.content_type"></stringProp>
+                </elementProp>
+                <elementProp name="client_secret" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.value">${clientsecret}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">client_secret</stringProp>
+                  <stringProp name="HTTPArgument.content_type"></stringProp>
+                </elementProp>
+                <elementProp name="scope" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.value">${scope}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">scope</stringProp>
+                  <stringProp name="HTTPArgument.content_type"></stringProp>
+                </elementProp>
+                <elementProp name="grant_type" elementType="HTTPArgument">
+                  <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                  <stringProp name="Argument.value">${granttype}</stringProp>
+                  <stringProp name="Argument.metadata">=</stringProp>
+                  <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                  <stringProp name="Argument.name">grant_type</stringProp>
+                  <stringProp name="HTTPArgument.content_type"></stringProp>
+                </elementProp>
+              </collectionProp>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="Accept" elementType="Header">
+                  <stringProp name="Header.name">Accept</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="Content-Type" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/x-www-form-urlencoded; charset=utf-8</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">token_type; resource; access_token</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">token_type; resource; access_token</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+              <stringProp name="JSONPostProcessor.defaultValues">&quot;&quot;;&quot;&quot;;&quot;&quot;</stringProp>
+            </JSONPostProcessor>
+            <hashTree/>
+            <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor" enabled="true">
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="parameters">1 1000000</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="script">//import org.apache.commons.lang3.text.WordUtils;
+//char[] delimiters = { &apos; &apos;, &apos;_&apos; };
+//
+////--------------------------------------------------------------------------------------------------
+////Read FlagValues for sfaccount Creation
+////--------------------------------------------------------------------------------------------------
+//salesForceAccountid=&quot;&quot;;
+//salesForceClientid = &quot;&quot;;
+//salesForceJobid = &quot;&quot;;
+//salesForceCandidateid= &quot;&quot;;
+//tempPlacementid= &quot;&quot;;
+//SFCandidatePlacementID =&quot;&quot;;
+//tempPlacementidstatus =&quot;&quot;;
+//
+//String createAccountFlag=vars.get(&quot;1_FI_AccountCreation.json&quot;);
+//vars.put(&quot;createAccountFlag&quot;,createAccountFlag);
+//String submitLetoNetsuiteFlag=vars.get(&quot;2_FI_SubmitLEToNetsuite.json&quot;);
+//vars.put(&quot;submitLetoNetsuiteFlag&quot;,submitLetoNetsuiteFlag);
+//String createClientFlag=vars.get(&quot;3_FE_ClientCreation.json&quot;);
+//vars.put(&quot;createClientFlag&quot;,createClientFlag);
+//String createJobFlag=vars.get(&quot;4_FE_JobCreation.json&quot;);
+//vars.put(&quot;createJobFlag&quot;,createJobFlag);
+//String createCandidateCompanyFlag=vars.get(&quot;5_FE_CreateCandidateCompany.json&quot;);
+//vars.put(&quot;createCandidateCompanyFlag&quot;,createCandidateCompanyFlag);
+//String createCandidateFlag=vars.get(&quot;6_FE_CreateCandidate.json&quot;);
+//vars.put(&quot;createCandidateFlag&quot;,createCandidateFlag);
+//String createCandidateComplianceReferenceFlag=vars.get(&quot;7_FE_CreateCandidateComplianceReference.json&quot;);
+//vars.put(&quot;createCandidateComplianceReferenceFlag&quot;,createCandidateComplianceReferenceFlag);
+//String createCandidateCompliancePGCV=vars.get(&quot;8_FE_CreateCandidateCompliancePGCV.json&quot;);
+//vars.put(&quot;createCandidateCompliancePGCV&quot;,createCandidateCompliancePGCV);
+//String candidateComplainceInsuranceFlag=vars.get(&quot;9_FE_CreateCandidateComplianceInsurance.json&quot;);
+//vars.put(&quot;candidateComplainceInsuranceFlag&quot;,candidateComplainceInsuranceFlag);
+//String createTempPlacementFlag=vars.get(&quot;10_FE_CreateTempPlacement.json&quot;);
+//vars.put(&quot;createTempPlacementFlag&quot;,createTempPlacementFlag);
+//String addStandardRateToPlacementFlag=vars.get(&quot;11_FE_AddStandardRateToPlacement.json&quot;);
+//vars.put(&quot;addStandardRateToPlacementFlag&quot;,addStandardRateToPlacementFlag);
+//String submitTPForApproval_PlacementInPendingReviewFlag=vars.get(&quot;12_FE_SubmitTPForApproval_PlacementInPendingReview.json&quot;);
+//vars.put(&quot;submitTPForApproval_PlacementInPendingReviewFlag&quot;,submitTPForApproval_PlacementInPendingReviewFlag);
+//String updatePlaceFieldsFlag=vars.get(&quot;13_FI_UpdatePlacementFields.json&quot;);
+//vars.put(&quot;updatePlaceFieldsFlag&quot;,updatePlaceFieldsFlag);
+//String updatePlacementStageToCompletedFlag=vars.get(&quot;14_FI_UpdatePlacementStageToCompleted.json&quot;);
+//vars.put(&quot;updatePlacementStageToCompletedFlag&quot;,updatePlacementStageToCompletedFlag);
+//String ApproveTPFlag=vars.get(&quot;15_FI_ApproveTP.json&quot;);
+//vars.put(&quot;ApproveTPFlag&quot;,ApproveTPFlag);
+//String movePlacementToContractIssuedFlag=vars.get(&quot;16_FI_MovePlacementToContractIssued.json&quot;);
+//vars.put(&quot;movePlacementToContractIssuedFlag&quot;,movePlacementToContractIssuedFlag);
+//
+////--------------------------------------------------------------------------------------------------
+////Generating random CompanyAccount name
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstring =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstring += chars.substring(randomInt,randomInt+1);
+//}
+//
+//String Companyname =WordUtils.capitalizeFully(&quot;Suiapicompany&quot;+randomstring, delimiters);
+//vars.put(&quot;CompanyAccount&quot;,Companyname);
+////log.info(&quot;********************CompanyAccount is &quot; + CompanyAccount);
+//////--------------------------------------------------------------------------------------------------
+//////Generating randam candidate Details
+//////--------------------------------------------------------------------------------------------------
+//candidateEmail=&quot;SuiapiCandidate${__Random(1,1000)}${__time(ddMMyyyyhhmmss)}@example.com&quot;;
+//vars.put(&quot;candidateEmail&quot;,candidateEmail);
+//LastName=&quot;${__RandomString(10,abcdefghijklmnopqrstuvwxyz,)}&quot;;
+//String candidateLastName =WordUtils.capitalizeFully(LastName, delimiters);
+//vars.put(&quot;candidateLastName&quot;,candidateLastName);
+//vars.put(&quot;candidateName&quot;,&quot;Suiapicandidate&quot; + &quot; &quot;+  candidateLastName);
+////log.info(&quot;********************output is &quot; + candidateName);
+//
+////--------------------------------------------------------------------------------------------------//--------------------------------------------------------------------------------------------------
+////Generating random client accountName
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//String output = &quot;&quot;;
+//int string_length = 9;
+//randomstringClient =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringClient += chars.substring(randomInt,randomInt+1);
+//}
+//String output =WordUtils.capitalizeFully(&quot;SUIAPIAccount &quot;+ randomstringClient, delimiters);
+////log.info(&quot;********************output is &quot; + output);
+//vars.put(&quot;Account&quot;,output);
+////log.info(&quot;********************AccountName is &quot; + Account);
+//
+////*******************************************************
+////Generating Random Email ID using above UI parameters(bsh.args)
+////*******************************************************
+//int min = Integer.parseInt(bsh.args[0]); // get first parameter
+//int max = Integer.parseInt(bsh.args[1]); // get second parameter
+//int random =  min + (int) (Math.random() * ((max - min) + 1));  
+//int random1 =  min + (int) (Math.random() * ((max - min) + 1));  	
+//vars.put(&quot;ClientEmail&quot;, &quot;Suiapiclient_&quot;+ String.valueOf(random)+String.valueOf(random1)+&quot;@example.com&quot;);
+////log.info(&quot;********************ClientEmail is &quot; + ClientEmail);
+//
+//////---------------
+//////ClientLastName
+//////---------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstringLastName =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringLastName += chars.substring(randomInt,randomInt+1);
+//}
+//String output =WordUtils.capitalizeFully(randomstringLastName, delimiters);
+//vars.put(&quot;lastName&quot;,output);
+//vars.put(&quot;ClientName&quot;,&quot;Suiapiclient&quot; + &quot; &quot; + output);
+//
+//////--------------------------------------------------------------------------------------------------
+//////Generating random jobName
+//////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomJobstring =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomJobstring += chars.substring(randomInt,randomInt+1);
+//}
+//
+//jobName=&quot;SUIAPIJob &quot;+ randomJobstring;
+//String output =WordUtils.capitalizeFully(jobName, delimiters);
+//vars.put(&quot;jobName&quot;,output);
+////log.info(&quot;********************jobName is &quot; + jobName);
+//
+////--------------------------------------------------------------------------------------------------
+////Generating random LEI Name
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstringLEIAccount =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringLEIAccount += chars.substring(randomInt,randomInt+1);
+//}
+//String output =&quot;&quot;;
+//String output =WordUtils.capitalizeFully(&quot;SuiLEIAccount &quot;+randomstringLEIAccount, delimiters);
+//vars.put(&quot;LEIAccount&quot;,output);
+////log.info(&quot;********************LEIAccount is &quot; + jobName);
+//
+//csvUpdate=&quot;TRUE&quot;;
+//vars.put(&quot;csvUpdate&quot;,csvUpdate);</stringProp>
+            </BeanShellPreProcessor>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="UserAccessTokenValidation" enabled="true">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">#!/usr/bin/env groovy
+/**
+ * A processor to parse the json response from genie 
+ * and process them into jmeter variables
+ */
+import groovy.json.JsonSlurper 
+def slurper = new JsonSlurper()
+//intialize variables
+vars.put(&quot;responseFound&quot;,&quot;False&quot;)
+
+//adding wait time
+//sleep(15000);
+log.info(&quot;Response time of the last request&quot; + prev.getResponseCode())
+log.info(&quot;Response time of the last request&quot; + prev.getResponseDataAsString())
+if (prev.getResponseDataAsString().contains(&quot;access_token&quot;)){
+	//log.info(&quot;Response contains access_token&quot; + prev.getResponseDataAsString())	
+	vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;)	
+	def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+	String accessToken = json.access_token	
+	vars.put(&quot;accessToken&quot;,accessToken);
+	//log.info(&quot;accessToken is &quot; + accessToken)	
+}</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="Content-Type" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+          </hashTree>
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="xxi__${Country}_${test.id}">
+            <stringProp name="HTTPSampler.domain">${xx}</stringProp>
+            <stringProp name="HTTPSampler.protocol">https</stringProp>
+            <stringProp name="HTTPSampler.contentEncoding">UTF-8</stringProp>
+            <stringProp name="HTTPSampler.path">${xx}</stringProp>
+            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+            <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+              <collectionProp name="Arguments.arguments"/>
+            </elementProp>
+          </HTTPSamplerProxy>
+          <hashTree>
+            <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+              <collectionProp name="HeaderManager.headers">
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Authorization</stringProp>
+                  <stringProp name="Header.value">Bearer ${accessToken}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">Content-Type</stringProp>
+                  <stringProp name="Header.value">application/json</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">X-PrettyPrint</stringProp>
+                  <stringProp name="Header.value">1</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">client_id</stringProp>
+                  <stringProp name="Header.value">${client_id_sas}</stringProp>
+                </elementProp>
+                <elementProp name="" elementType="Header">
+                  <stringProp name="Header.name">client_secret</stringProp>
+                  <stringProp name="Header.value">${client_secret_sas}</stringProp>
+                </elementProp>
+              </collectionProp>
+            </HeaderManager>
+            <hashTree/>
+            <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager">
+              <collectionProp name="AuthManager.auth_list"/>
+              <boolProp name="AuthManager.controlledByThreadGroup">false</boolProp>
+            </AuthManager>
+            <hashTree/>
+            <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="Responce Validation">
+              <stringProp name="cacheKey">true</stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="script">#!/usr/bin/env groovy
+/**
+ * A processor to parse the json response from genie 
+ * and process them into jmeter variables
+ */
+import groovy.json.JsonSlurper 
+def slurper = new JsonSlurper()
+//adding wait time
+//sleep(15000);
+String OnBoardingApplicationIdIs= &quot;&quot;;
+String statusofApplication= &quot;&quot;;
+String DescriptionStatus=&quot;&quot;;
+String correlationIDIs =&quot;&quot;;
+log.info(&quot;Response time of the last request&quot; + prev.getResponseCode())
+log.info(&quot;Response time of the last request&quot; + prev.getResponseDataAsString())
+if (prev.getResponseDataAsString().contains(&quot;xx&quot;)){
+	log.info(&quot;Response contains xx&quot; + prev.getResponseDataAsString())	
+	vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;)	
+	def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+	//log.info(&quot;json is &quot; + json)
+	OnBoardingApplicationIdIs = json.OnBoardingApplicationId
+	vars.put(&quot;OnBoardingApplicationIdIs&quot;,OnBoardingApplicationIdIs);
+	vars.put(&quot;statusofApplication&quot;,json.Status);
+	vars.put(&quot;DescriptionStatus&quot;,json.Description);
+	//log.info(&quot;extracted value OnBoardAppID is &quot; + OnBoardingApplicationIdIs);	
+}
+
+if (prev.getResponseDataAsString().contains(&quot;correlationId&quot;)){
+	log.info(&quot;Response contains correlationId&quot; + prev.getResponseDataAsString())	
+	vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;)	
+	def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+	//log.info(&quot;json is &quot; + json);
+	correlationId = json.correlationId;
+	vars.put(&quot;xx&quot;,&quot;Null&quot;);
+	vars.put(&quot;statusofApplication&quot;,json.errorCode);
+	vars.put(&quot;xx&quot;,json.errorMessage);
+	vars.put(&quot;x&quot;,json.correlationId);
+	//log.info(&quot;error message is  &quot; + json.errorMessage);	
+}
+
+
+csvUpdate=&quot;TRUE&quot;;
+vars.put(&quot;csvUpdate&quot;,csvUpdate);
+</stringProp>
+              <stringProp name="scriptLanguage">groovy</stringProp>
+            </JSR223PostProcessor>
+            <hashTree/>
+            <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor">
+              <boolProp name="resetInterpreter">false</boolProp>
+              <stringProp name="parameters"></stringProp>
+              <stringProp name="filename"></stringProp>
+              <stringProp name="script">//
+//import org.apache.jmeter.services.FileServer;
+//import java.util.Date;
+//import java.text.SimpleDateFormat;
+//
+////log.info(&quot;======================JSONBODY SAVE============================&quot;);
+//
+//arguments = ctx.getCurrentSampler().getArguments();
+//log.info(&quot;Current Sampler class is: &quot; + ctx.getCurrentSampler());
+//
+//String path=FileServer.getFileServer().getBaseDir();
+//
+//Date objDate = new Date(); // Current System Date and time is assigned to objDate
+//System.out.println(objDate);
+//String strDateFormat = &quot;dd-MMM-yyyyhhmmssa&quot;; //Date format is Specified
+//SimpleDateFormat objSDF = new SimpleDateFormat(strDateFormat); //Date format string is passed as an argument to the Date format object
+//System.out.println(objSDF.format(objDate)); 
+//date=objSDF.format(objDate);
+//
+//jsonnotepadFile = vars.get(&quot;test.id&quot;) +  &quot;_&quot; + vars.get(&quot;Environment&quot;) +&quot;_&quot; + vars.get(&quot;Country&quot;) + &quot;_&quot; + vars.get(&quot;CompanyId&quot;) +  &quot;_&quot; + vars.get(&quot;ApplicationSource&quot;) + &quot;_&quot; +  date + &quot;.txt&quot;;
+////log.info(&quot;jsonnotepadFile is &quot; + jsonnotepadFile);
+//
+//f = new FileOutputStream(FileServer.getFileServer().getBaseDir()+&quot;//JsonRequests//&quot; + jsonnotepadFile, true); 
+//p = new PrintStream(f);
+//this.interpreter.setOut(p); 
+//
+//p.println(arguments);
+//	
+//p.close();
+//f.close();
+</stringProp>
+            </BeanShellPostProcessor>
+            <hashTree/>
+          </hashTree>
+          <IfController guiclass="IfControllerPanel" testclass="IfController" testname="xxFromRefresh">
+            <stringProp name="IfController.condition">${__javaScript(&quot;${firstDirectorFlag}&quot; == &quot;TRUE&quot;)}</stringProp>
+            <boolProp name="IfController.evaluateAll">false</boolProp>
+            <boolProp name="IfController.useExpression">true</boolProp>
+          </IfController>
+          <hashTree>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="xxCreateTokenFromRefresh_${Country}_${test.id}">
+              <stringProp name="HTTPSampler.domain">${sasserverName}</stringProp>
+              <stringProp name="HTTPSampler.protocol">https</stringProp>
+              <stringProp name="HTTPSampler.path">${sasserverPath}</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="grant_type" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">true</boolProp>
+                    <stringProp name="Argument.value">refresh_token</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">grant_type</stringProp>
+                    <stringProp name="HTTPArgument.content_type"></stringProp>
+                  </elementProp>
+                  <elementProp name="refresh_token" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">${RefreshToken}</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                    <boolProp name="HTTPArgument.use_equals">true</boolProp>
+                    <stringProp name="Argument.name">refresh_token</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <AuthManager guiclass="AuthPanel" testclass="AuthManager" testname="HTTP Authorization Manager">
+                <collectionProp name="AuthManager.auth_list">
+                  <elementProp name="" elementType="Authorization">
+                    <stringProp name="Authorization.url"></stringProp>
+                    <stringProp name="Authorization.username">xx</stringProp>
+                    <stringProp name="Authorization.password"></stringProp>
+                    <stringProp name="Authorization.domain"></stringProp>
+                    <stringProp name="Authorization.realm"></stringProp>
+                  </elementProp>
+                </collectionProp>
+                <boolProp name="AuthManager.controlledByThreadGroup">false</boolProp>
+              </AuthManager>
+              <hashTree/>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Accept" elementType="Header">
+                    <stringProp name="Header.name">Accept</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/x-www-form-urlencoded; charset=utf-8</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="JSON Extractor">
+                <stringProp name="JSONPostProcessor.referenceNames">token_type; resource; access_token</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">token_type; resource; access_token</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
+                <stringProp name="JSONPostProcessor.defaultValues">&quot;&quot;;&quot;&quot;;&quot;&quot;</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+              <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor">
+                <boolProp name="resetInterpreter">false</boolProp>
+                <stringProp name="parameters">1 1000000</stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="script">//import org.apache.commons.lang3.text.WordUtils;
+//char[] delimiters = { &apos; &apos;, &apos;_&apos; };
+//
+////--------------------------------------------------------------------------------------------------
+////Read FlagValues for sfaccount Creation
+////--------------------------------------------------------------------------------------------------
+//salesForceAccountid=&quot;&quot;;
+//salesForceClientid = &quot;&quot;;
+//salesForceJobid = &quot;&quot;;
+//salesForceCandidateid= &quot;&quot;;
+//tempPlacementid= &quot;&quot;;
+//SFCandidatePlacementID =&quot;&quot;;
+//tempPlacementidstatus =&quot;&quot;;
+//
+//String createAccountFlag=vars.get(&quot;1_FI_AccountCreation.json&quot;);
+//vars.put(&quot;createAccountFlag&quot;,createAccountFlag);
+//String submitLetoNetsuiteFlag=vars.get(&quot;2_FI_SubmitLEToNetsuite.json&quot;);
+//vars.put(&quot;submitLetoNetsuiteFlag&quot;,submitLetoNetsuiteFlag);
+//String createClientFlag=vars.get(&quot;3_FE_ClientCreation.json&quot;);
+//vars.put(&quot;createClientFlag&quot;,createClientFlag);
+//String createJobFlag=vars.get(&quot;4_FE_JobCreation.json&quot;);
+//vars.put(&quot;createJobFlag&quot;,createJobFlag);
+//String createCandidateCompanyFlag=vars.get(&quot;5_FE_CreateCandidateCompany.json&quot;);
+//vars.put(&quot;createCandidateCompanyFlag&quot;,createCandidateCompanyFlag);
+//String createCandidateFlag=vars.get(&quot;6_FE_CreateCandidate.json&quot;);
+//vars.put(&quot;createCandidateFlag&quot;,createCandidateFlag);
+//String createCandidateComplianceReferenceFlag=vars.get(&quot;7_FE_CreateCandidateComplianceReference.json&quot;);
+//vars.put(&quot;createCandidateComplianceReferenceFlag&quot;,createCandidateComplianceReferenceFlag);
+//String createCandidateCompliancePGCV=vars.get(&quot;8_FE_CreateCandidateCompliancePGCV.json&quot;);
+//vars.put(&quot;createCandidateCompliancePGCV&quot;,createCandidateCompliancePGCV);
+//String candidateComplainceInsuranceFlag=vars.get(&quot;9_FE_CreateCandidateComplianceInsurance.json&quot;);
+//vars.put(&quot;candidateComplainceInsuranceFlag&quot;,candidateComplainceInsuranceFlag);
+//String createTempPlacementFlag=vars.get(&quot;10_FE_CreateTempPlacement.json&quot;);
+//vars.put(&quot;createTempPlacementFlag&quot;,createTempPlacementFlag);
+//String addStandardRateToPlacementFlag=vars.get(&quot;11_FE_AddStandardRateToPlacement.json&quot;);
+//vars.put(&quot;addStandardRateToPlacementFlag&quot;,addStandardRateToPlacementFlag);
+//String submitTPForApproval_PlacementInPendingReviewFlag=vars.get(&quot;12_FE_SubmitTPForApproval_PlacementInPendingReview.json&quot;);
+//vars.put(&quot;submitTPForApproval_PlacementInPendingReviewFlag&quot;,submitTPForApproval_PlacementInPendingReviewFlag);
+//String updatePlaceFieldsFlag=vars.get(&quot;13_FI_UpdatePlacementFields.json&quot;);
+//vars.put(&quot;updatePlaceFieldsFlag&quot;,updatePlaceFieldsFlag);
+//String updatePlacementStageToCompletedFlag=vars.get(&quot;14_FI_UpdatePlacementStageToCompleted.json&quot;);
+//vars.put(&quot;updatePlacementStageToCompletedFlag&quot;,updatePlacementStageToCompletedFlag);
+//String ApproveTPFlag=vars.get(&quot;15_FI_ApproveTP.json&quot;);
+//vars.put(&quot;ApproveTPFlag&quot;,ApproveTPFlag);
+//String movePlacementToContractIssuedFlag=vars.get(&quot;16_FI_MovePlacementToContractIssued.json&quot;);
+//vars.put(&quot;movePlacementToContractIssuedFlag&quot;,movePlacementToContractIssuedFlag);
+//
+////--------------------------------------------------------------------------------------------------
+////Generating random CompanyAccount name
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstring =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstring += chars.substring(randomInt,randomInt+1);
+//}
+//
+//String Companyname =WordUtils.capitalizeFully(&quot;Suiapicompany&quot;+randomstring, delimiters);
+//vars.put(&quot;CompanyAccount&quot;,Companyname);
+////log.info(&quot;********************CompanyAccount is &quot; + CompanyAccount);
+//////--------------------------------------------------------------------------------------------------
+//////Generating randam candidate Details
+//////--------------------------------------------------------------------------------------------------
+//candidateEmail=&quot;SuiapiCandidate${__Random(1,1000)}${__time(ddMMyyyyhhmmss)}@example.com&quot;;
+//vars.put(&quot;candidateEmail&quot;,candidateEmail);
+//LastName=&quot;${__RandomString(10,abcdefghijklmnopqrstuvwxyz,)}&quot;;
+//String candidateLastName =WordUtils.capitalizeFully(LastName, delimiters);
+//vars.put(&quot;candidateLastName&quot;,candidateLastName);
+//vars.put(&quot;candidateName&quot;,&quot;Suiapicandidate&quot; + &quot; &quot;+  candidateLastName);
+////log.info(&quot;********************output is &quot; + candidateName);
+//
+////--------------------------------------------------------------------------------------------------//--------------------------------------------------------------------------------------------------
+////Generating random client accountName
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//String output = &quot;&quot;;
+//int string_length = 9;
+//randomstringClient =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringClient += chars.substring(randomInt,randomInt+1);
+//}
+//String output =WordUtils.capitalizeFully(&quot;SUIAPIAccount &quot;+ randomstringClient, delimiters);
+////log.info(&quot;********************output is &quot; + output);
+//vars.put(&quot;Account&quot;,output);
+////log.info(&quot;********************AccountName is &quot; + Account);
+//
+////*******************************************************
+////Generating Random Email ID using above UI parameters(bsh.args)
+////*******************************************************
+//int min = Integer.parseInt(bsh.args[0]); // get first parameter
+//int max = Integer.parseInt(bsh.args[1]); // get second parameter
+//int random =  min + (int) (Math.random() * ((max - min) + 1));  
+//int random1 =  min + (int) (Math.random() * ((max - min) + 1));  	
+//vars.put(&quot;ClientEmail&quot;, &quot;Suiapiclient_&quot;+ String.valueOf(random)+String.valueOf(random1)+&quot;@example.com&quot;);
+////log.info(&quot;********************ClientEmail is &quot; + ClientEmail);
+//
+//////---------------
+//////ClientLastName
+//////---------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstringLastName =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringLastName += chars.substring(randomInt,randomInt+1);
+//}
+//String output =WordUtils.capitalizeFully(randomstringLastName, delimiters);
+//vars.put(&quot;lastName&quot;,output);
+//vars.put(&quot;ClientName&quot;,&quot;Suiapiclient&quot; + &quot; &quot; + output);
+//
+//////--------------------------------------------------------------------------------------------------
+//////Generating random jobName
+//////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomJobstring =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomJobstring += chars.substring(randomInt,randomInt+1);
+//}
+//
+//jobName=&quot;SUIAPIJob &quot;+ randomJobstring;
+//String output =WordUtils.capitalizeFully(jobName, delimiters);
+//vars.put(&quot;jobName&quot;,output);
+////log.info(&quot;********************jobName is &quot; + jobName);
+//
+////--------------------------------------------------------------------------------------------------
+////Generating random LEI Name
+////--------------------------------------------------------------------------------------------------
+//chars = &quot;abcdefghiklmnopqrstuvwxyz&quot;;
+//int string_length = 9;
+//randomstringLEIAccount =&quot;&quot;;
+//for (int i=0; i &lt; string_length; i++) {
+//  Random randomGenerator = new Random();
+// int randomInt = randomGenerator.nextInt(chars.length());
+//  randomstringLEIAccount += chars.substring(randomInt,randomInt+1);
+//}
+//String output =&quot;&quot;;
+//String output =WordUtils.capitalizeFully(&quot;SuiLEIAccount &quot;+randomstringLEIAccount, delimiters);
+//vars.put(&quot;LEIAccount&quot;,output);
+////log.info(&quot;********************LEIAccount is &quot; + jobName);
+//
+//csvUpdate=&quot;TRUE&quot;;
+//vars.put(&quot;csvUpdate&quot;,csvUpdate);</stringProp>
+              </BeanShellPreProcessor>
+              <hashTree/>
+              <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="UserAccessTokenValidation">
+                <stringProp name="cacheKey">true</stringProp>
+                <stringProp name="filename"></stringProp>
+                <stringProp name="parameters"></stringProp>
+                <stringProp name="script">#!/usr/bin/env groovy
+/**
+ * A processor to parse the json response from genie 
+ * and process them into jmeter variables
+ */
+import groovy.json.JsonSlurper 
+def slurper = new JsonSlurper()
+//intialize variables
+vars.put(&quot;responseFound&quot;,&quot;False&quot;)
+
+//adding wait time
+//sleep(15000);
+log.info(&quot;Response time of the last request&quot; + prev.getResponseCode())
+log.info(&quot;Response time of the last request&quot; + prev.getResponseDataAsString())
+if (prev.getResponseDataAsString().contains(&quot;access_token&quot;)){
+	//log.info(&quot;Response contains access_token&quot; + prev.getResponseDataAsString())	
+	vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;)	
+	def json = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+	String accessToken = json.access_token	
+	vars.put(&quot;accessToken&quot;,accessToken);
+	//log.info(&quot;accessToken is &quot; + accessToken)	
+}</stringProp>
+                <stringProp name="scriptLanguage">groovy</stringProp>
+              </JSR223PostProcessor>
+              <hashTree/>
+              <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager">
+                <collectionProp name="HeaderManager.headers">
+                  <elementProp name="Content-Type" elementType="Header">
+                    <stringProp name="Header.name">Content-Type</stringProp>
+                    <stringProp name="Header.value">application/json</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </HeaderManager>
+              <hashTree/>
+            </hashTree>
+            <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="BeanShell Sampler counter">
+              <stringProp name="BeanShellSampler.query">vars.put(&quot;counter&quot;,&quot;1&quot;);
+vars.put(&quot;txtFound&quot;,&quot;FALSE&quot;);</stringProp>
+            </BeanShellSampler>
+            <hashTree/>
+            <WhileController guiclass="WhileControllerGui" testclass="WhileController" testname="xx_Alerts_ID">
+              <stringProp name="WhileController.condition">${__javaScript(&quot;${txtFound}&quot; == &quot;FALSE&quot; &amp;&amp; parseInt(${counter})&lt;=5,)}</stringProp>
+            </WhileController>
+            <hashTree>
+              <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="xx">
+                <stringProp name="HTTPSampler.domain">${xx}</stringProp>
+                <stringProp name="HTTPSampler.protocol">https</stringProp>
+                <stringProp name="HTTPSampler.path">${xx}</stringProp>
+                <stringProp name="HTTPSampler.method">GET</stringProp>
+                <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                  <collectionProp name="Arguments.arguments"/>
+                </elementProp>
+              </HTTPSamplerProxy>
+              <hashTree>
+                <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                  <collectionProp name="HeaderManager.headers">
+                    <elementProp name="" elementType="Header">
+                      <stringProp name="Header.name">Authorization</stringProp>
+                      <stringProp name="Header.value">Bearer ${accessToken}</stringProp>
+                    </elementProp>
+                  </collectionProp>
+                </HeaderManager>
+                <hashTree/>
+                <BeanShellPreProcessor guiclass="TestBeanGUI" testclass="BeanShellPreProcessor" testname="BeanShell PreProcessor">
+                  <boolProp name="resetInterpreter">false</boolProp>
+                  <stringProp name="parameters">1 1000000</stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="script">import org.apache.jmeter.services.FileServer;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+import java.io.*;
+
+int counter = Integer.parseInt(vars.get(&quot;counter&quot;));
+if(counter==4){
+	vars.put(&quot;txtFound&quot;,&quot;TRUE&quot;);
+}
+counter++;
+vars.put(&quot;counter&quot;,Integer.toString(counter));
+</stringProp>
+                </BeanShellPreProcessor>
+                <hashTree/>
+                <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                  <stringProp name="cacheKey">true</stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="parameters"></stringProp>
+                  <stringProp name="script">//#!/usr/bin/env groovy
+//
+import groovy.json.JsonSlurper 
+import org.apache.commons.lang.StringUtils;
+def slurper = new JsonSlurper()
+String alertID = &quot;&quot;;
+vars.put(&quot;responseFound&quot;,&quot;FALSE&quot;);
+//log.info(&quot;Response time of the last request &quot; + prev.getResponseCode())
+//log.info(&quot;Response time of the last request &quot; + prev.getResponseDataAsString())
+def parsedJson = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+// Extract the text between square brackets
+def subject = parsedJson.fieldValues;
+log.info(&quot;subject are &quot; + subject);
+
+String text = vars.get(&quot;CompanyName&quot;)
+String companyName = text.toUpperCase(); // &quot;HELLO WORLD&quot;
+log.info(&quot;CompanyName after converting to uppercase ----&gt;&quot;, companyName);
+
+String companyNameIs = &quot;?=actionable_entity_nm:&quot; + companyName;
+log.info(&quot;companyNameIs is------&gt; &quot; + companyNameIs);
+////if (match1 = subject =~ / (?=applicant_name:AMALGAMATED CONSTRUCTION LTD).*?(?=alertingEventId)(.+?,)/) {	
+if (match1 = subject =~ / (${companyNameIs}).*?(?=alert_id)(.+?,)/) {
+  	  vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;);
+	  String replacedStr = match1.group(1).replaceAll(&quot;alert_id:&quot;, &quot;&quot;);
+	  alertID = replacedStr.substring(0, replacedStr.length() - 1);
+	  vars.put(&quot;xx&quot;,alertID);
+	  log.info(&quot;xx Generated =========================&quot; + alertID); 
+  } else{
+  	  vars.put(&quot;xx&quot;,&quot;ALert Id Not Generated for &quot;+ vars.get(&quot;CompanyName&quot;));
+	  log.info(&quot;xx Not Generated=========================&quot; + alertID); 
+ 	
+}
+</stringProp>
+                  <stringProp name="scriptLanguage">groovy</stringProp>
+                </JSR223PostProcessor>
+                <hashTree/>
+                <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer">
+                  <stringProp name="ConstantTimer.delay">30000</stringProp>
+                </ConstantTimer>
+                <hashTree/>
+              </hashTree>
+              <IfController guiclass="IfControllerPanel" testclass="IfController" testname="If Controller" enabled="true">
+                <stringProp name="IfController.condition">${__javaScript(&quot;${responseFound}&quot; == &quot;TRUE&quot;)}</stringProp>
+                <boolProp name="IfController.evaluateAll">false</boolProp>
+                <boolProp name="IfController.useExpression">true</boolProp>
+              </IfController>
+              <hashTree>
+                <BeanShellSampler guiclass="BeanShellSamplerGui" testclass="BeanShellSampler" testname="ResponseFoundTrueSampler">
+                  <stringProp name="BeanShellSampler.query">vars.put(&quot;txtFound&quot;,&quot;TRUE&quot;);
+</stringProp>
+                </BeanShellSampler>
+                <hashTree/>
+                <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor">
+                  <boolProp name="resetInterpreter">false</boolProp>
+                  <stringProp name="parameters"></stringProp>
+                  <stringProp name="filename"></stringProp>
+                  <stringProp name="script">log.info(&quot;***********responseFound is ************&quot; + responseFound);
+vars.put(&quot;responseFound&quot;,&quot;FALSE&quot;);
+</stringProp>
+                </BeanShellPostProcessor>
+                <hashTree/>
+                <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="xxID">
+                  <stringProp name="HTTPSampler.domain">${xx}</stringProp>
+                  <stringProp name="HTTPSampler.protocol">https</stringProp>
+                  <stringProp name="HTTPSampler.path">${xx}${xx}</stringProp>
+                  <stringProp name="HTTPSampler.method">GET</stringProp>
+                  <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+                  <boolProp name="HTTPSampler.postBodyRaw">false</boolProp>
+                  <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" testname="User Defined Variables">
+                    <collectionProp name="Arguments.arguments"/>
+                  </elementProp>
+                </HTTPSamplerProxy>
+                <hashTree>
+                  <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
+                    <collectionProp name="HeaderManager.headers">
+                      <elementProp name="" elementType="Header">
+                        <stringProp name="Header.name">Authorization</stringProp>
+                        <stringProp name="Header.value">Bearer ${accessToken}</stringProp>
+                      </elementProp>
+                    </collectionProp>
+                  </HeaderManager>
+                  <hashTree/>
+                  <JSR223PostProcessor guiclass="TestBeanGUI" testclass="JSR223PostProcessor" testname="JSR223 PostProcessor">
+                    <stringProp name="cacheKey">true</stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="script">//#!/usr/bin/env groovy
+//
+import groovy.json.JsonSlurper 
+import org.apache.commons.lang.StringUtils;
+def slurper = new JsonSlurper()
+String alertID = &quot;&quot;;
+vars.put(&quot;responseFound&quot;,&quot;FALSE&quot;);
+//log.info(&quot;Response time of the last request &quot; + prev.getResponseCode())
+//log.info(&quot;Response time of the last request &quot; + prev.getResponseDataAsString())
+def parsedJson = new groovy.json.JsonSlurper().parseText(prev.getResponseDataAsString())
+// Extract the text between square brackets
+def subject = parsedJson.lastUpdatedAt;
+//log.info(&quot;lastUpdatedAt are &quot; + subject);
+vars.put(&quot;APPLICATION_RECEIVED_DATE_FROM_SAS&quot;,subject);
+vars.put(&quot;responseFound&quot;,&quot;TRUE&quot;);
+</stringProp>
+                    <stringProp name="scriptLanguage">groovy</stringProp>
+                  </JSR223PostProcessor>
+                  <hashTree/>
+                  <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor">
+                    <boolProp name="resetInterpreter">false</boolProp>
+                    <stringProp name="parameters"></stringProp>
+                    <stringProp name="filename"></stringProp>
+                    <stringProp name="script">import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+
+if (vars.get(&quot;responseFound&quot;).contains(&quot;TRUE&quot;)){ 
+  SimpleDateFormat dateFormat = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;hh:mm:ss&quot;);
+  //Date firstParsedDate = dateFormat.parse(&quot;2024-10-16T04:09:23&quot;);
+  String ApplicationSubmittedFromMulesoft = vars.get(&quot;ApplicationSubmittedDTM&quot;);
+  Date firstParsedDate = dateFormat.parse(ApplicationSubmittedFromMulesoft.toString());
+  log.info(&quot;ApplicationSubmittedFromMulesoft is --&gt;&quot; +vars.get(&quot;ApplicationSubmittedDTM&quot;));
+  //log.info(&quot;firstParsedDate is ---&gt;&quot; + firstParsedDate);
+  //APPLICATION_RECEIVED_DATE_FROM_SAS
+  String applRecDateFromSASIS = vars.get(&quot;APPLICATION_RECEIVED_DATE_FROM_xx&quot;);
+  
+  //------------------adding one hour
+	SimpleDateFormat sdf = new SimpleDateFormat(&quot;yyyy-MM-dd&apos;T&apos;hh:mm:ss&quot;);
+	Date before = sdf.parse(applRecDateFromSASIS);
+	Calendar cal = Calendar.getInstance();
+	cal.setTime(before);
+	cal.add(Calendar.HOUR, +1);
+	Date after = cal.getTime();
+	String applRecDateFromSAS = sdf.format(after);
+	log.info(&quot;applRecDateFrom after adding one hous is &quot; +applRecDateFromSAS);
+	vars.put(&quot;applRecDateFrom&quot;,applRecDateFromSAS);
+ //------------------adding one hour  
+  
+  Date secondParsedDate = dateFormat.parse(applRecDateFromSAS.toString());
+  log.info(&quot;APPLICATION_RECEIVED_DATE_FROM_xx is --&gt;&quot; +vars.get(&quot;xx&quot;));
+  long diffmilliseconds = secondParsedDate.getTime()-firstParsedDate.getTime();
+  log.info(&quot;firstParsedDate is ---&gt;&quot; + firstParsedDate);
+  log.info(&quot;secondParsedDate is --&gt;&quot; + secondParsedDate);
+  log.info(&quot;time difference : &quot; + diffmilliseconds );
+  long minutes = (diffmilliseconds / 1000)  / 60;
+  int seconds = (int)((diffmilliseconds / 1000) % 60);
+  log.info(&quot;seconds difference : &quot; + seconds );
+  vars.put(&quot;Totalseconds&quot;,String.valueOf(seconds));
+  vars.put(&quot;TotalMillseconds&quot;,String.valueOf(diffmilliseconds));  
+
+  vars.put(&quot;FinalResult&quot;,&quot;null&quot;);
+  if (seconds &lt; 59) {
+	vars.put(&quot;FinalResult&quot;,&quot;Pass&quot;);
+	log.info(&quot;FinalResult is ----&gt; : &quot; + vars.get(&quot;FinalResult&quot;));	
+  }
+  if (seconds &gt; 60) {
+	vars.put(&quot;FinalResult&quot;,&quot;Fail&quot;);
+	log.info(&quot;FinalResult is ----&gt;  &quot; + vars.get(&quot;FinalResult&quot;));
+  }
+
+}
+
+
+
+
+</stringProp>
+                  </BeanShellPostProcessor>
+                  <hashTree/>
+                  <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="false">
+                    <stringProp name="ConstantTimer.delay">30000</stringProp>
+                  </ConstantTimer>
+                  <hashTree/>
+                </hashTree>
+              </hashTree>
+            </hashTree>
+          </hashTree>
+        </hashTree>
+        <IfController guiclass="IfControllerPanel" testclass="IfController" testname="ResultUpdate">
+          <stringProp name="IfController.condition">${__javaScript(&quot;${csvUpdate}&quot; == &quot;TRUE&quot;)}</stringProp>
+          <boolProp name="IfController.evaluateAll">false</boolProp>
+          <boolProp name="IfController.useExpression">true</boolProp>
+        </IfController>
+        <hashTree>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="BeanShell PostProcessor" enabled="true">
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="parameters"></stringProp>
+            <stringProp name="filename"></stringProp>
+            <stringProp name="script">import org.apache.jmeter.services.FileServer;
+import java.util.Date;
+import java.text.SimpleDateFormat;
+
+
+String path=FileServer.getFileServer().getBaseDir();
+
+Date objDate = new Date(); // Current System Date and time is assigned to objDate
+System.out.println(objDate);
+String strDateFormat = &quot;hh:mm:ss a dd-MMM-yyyy&quot;; //Date format is Specified
+SimpleDateFormat objSDF = new SimpleDateFormat(strDateFormat); //Date format string is passed as an argument to the Date format object
+System.out.println(objSDF.format(objDate)); 
+date=objSDF.format(objDate);
+
+f = new FileOutputStream(FileServer.getFileServer().getBaseDir()+&quot;//Output//output_MulesoftToSasApi.csv&quot;, true); 
+p = new PrintStream(f);
+this.interpreter.setOut(p); 
+
+p.println( vars.get(&quot;test.id&quot;) + &quot;,&quot; + vars.get(&quot;Environment&quot;)  + &quot;,&quot; + vars.get(&quot;CompanyId&quot;)  + &quot;,&quot; + vars.get(&quot;OnBoardingApplicationIdIs&quot;) +  &quot;,&quot; + vars.get(&quot;CompanyName&quot;) + &quot;,&quot; + vars.get(&quot;statusofApplication&quot;) + &quot;,&quot; + vars.get(&quot;DescriptionStatus&quot;) + &quot;,&quot; + vars.get(&quot;correlationIDIs&quot;)  + &quot;,&quot; + vars.get(&quot;ApplicationSubmittedDTM&quot;)  + &quot;,&quot; + vars.get(&quot;applRecDateFromSAS&quot;)
++ &quot;,&quot; +  vars.get(&quot;Totalseconds&quot;) +  &quot;,&quot; +  vars.get(&quot;TotalMillseconds&quot;) +   &quot;,&quot; +  vars.get(&quot;FinalResult&quot;) +  &quot;,&quot; + date );
+	
+p.close();
+f.close();
+
+log.info(&quot;data copied to excel sheet: &quot; + date); 
+//	
+//
+</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="ResultWriteSampler" enabled="true">
+            <boolProp name="displayJMeterProperties">false</boolProp>
+            <boolProp name="displayJMeterVariables">true</boolProp>
+            <boolProp name="displaySystemProperties">false</boolProp>
+          </DebugSampler>
+          <hashTree/>
+          <ConstantTimer guiclass="ConstantTimerGui" testclass="ConstantTimer" testname="Constant Timer" enabled="true">
+            <stringProp name="ConstantTimer.delay">1000</stringProp>
+          </ConstantTimer>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>false</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <threadCounts>true</threadCounts>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename">${jmeter.test.home}\\Result\Result_AggregateReport_MulesoftAPI_${__time(dd-MM-yyyy-HH-mm-ss,)}.csv</stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="TableVisualizer" testclass="ResultCollector" testname="View Results in Table" enabled="false">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>true</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <fileName>true</fileName>
+              <hostname>true</hostname>
+              <threadCounts>true</threadCounts>
+              <sampleCount>true</sampleCount>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename">/Users/mfv-hn-computer-0047/aa_performance_jmeter/log/start_usage/Results_in_Table.csv</stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+    </hashTree>
+  </hashTree>
+</jmeterTestPlan>
