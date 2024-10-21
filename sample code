@@ -724,6 +724,16 @@ String replacedStr = match1.group(1).replaceAll("alertingEventId:", "");
 String alertID = replacedStr.substring(0, replacedStr.length() - 1);
  
 log.info("alertID =========================" + alertID);
+
+def application_referencecountcount = parsedJson.application.size();
+log.info("count of application count are ***********" + application_referencecountcount);
+def title_numbercount = parsedJson.x.size();
+log.info("count of xare ***********" + x
+var app_ref = parsedJson.reference;
+for(x in app_ref){
+	var secondSplit = x.split(",")
+	log.info("app_ref is " + app_ref[0]);
+}
                      
 
 financials > Income statement >> Net Income >> For last 3 years
