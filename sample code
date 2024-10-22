@@ -734,6 +734,19 @@ for(x in app_ref){
 	var secondSplit = x.split(",")
 	log.info("app_ref is " + app_ref[0]);
 }
+//import org.apache.jmeter.services.FileServer;
+// Overwrite any existing file
+FileWriter fstream = new FileWriter(FileServer.getFileServer().getBaseDir()+"//Output//listofabrs.csv", false);
+BufferedWriter out = new BufferedWriter(fstream);
+
+for(x in app_ref){
+	var secondSplit = x.split(",")
+	out.write(System.getProperty("line.separator"));
+}
+
+// out.write(uuid_1);
+out.close();
+fstream.close();
 
 
 import org.apache.commons.io.FileUtils
