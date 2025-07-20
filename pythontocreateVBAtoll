@@ -1,0 +1,256 @@
+import openpyxl
+from openpyxl.worksheet.datavalidation import DataValidation
+import xlwings as xw
+import os
+
+# === VBA code as a multi-line string ===
+vba_code = '''
+Option Explicit
+
+Dim prevResultValue As String
+
+Sub RunSelectedQuery()
+    On Error GoTo ErrHandler
+
+    Dim wsDash As Worksheet, wsQueryList As Worksheet
+    Dim dbType As String, queryName As String, sqlTemplate As String
+    Dim paramCount As Integer, i As Integer
+    Dim paramValues() As String
+    Dim conn As Object, rs As Object
+    Dim connStr As String, finalSQL As String
+    Dim placeholder As String
+
+    Set wsDash = ThisWorkbook.Sheets("Dashboard")
+    Set wsQueryList = ThisWorkbook.Sheets("QueryList")
+
+    dbType = Trim(wsDash.Range("B2").Value)
+    queryName = Trim(wsDash.Range("B3").Value)
+
+    If dbType = "" Or queryName = "" Then
+        MsgBox "Please select both database and query.", vbExclamation
+        Exit Sub
+    End If
+
+    ' Find SQL template
+    Dim lastRow As Long
+    lastRow = wsQueryList.Cells(wsQueryList.Rows.Count, "A").End(xlUp).Row
+    sqlTemplate = ""
+    For i = 2 To lastRow
+        If wsQueryList.Cells(i, 1).Value = dbType And wsQueryList.Cells(i, 2).Value = queryName Then
+            sqlTemplate = wsQueryList.Cells(i, 3).Value
+            Exit For
+        End If
+    Next i
+
+    If sqlTemplate = "" Then
+        MsgBox "Query not found!", vbCritical
+        Exit Sub
+    End If
+
+    ' Count parameters (#P1#, #P2#, etc.)
+    paramCount = CountParameters(sqlTemplate)
+
+    If paramCount > 5 Then
+        MsgBox "Supports max 5 parameters. Please reduce parameters in SQL.", vbCritical
+        Exit Sub
+    End If
+
+    ' Read parameter inputs from Dashboard B4:B8
+    ReDim paramValues(1 To paramCount)
+    For i = 1 To paramCount
+        paramValues(i) = wsDash.Range("B" & (3 + i)).Value
+    Next i
+
+    ' Replace parameters in SQL
+    finalSQL = sqlTemplate
+    For i = 1 To paramCount
+        placeholder = "#P" & i & "#"
+        finalSQL = Replace(finalSQL, placeholder, paramValues(i))
+    Next i
+
+    ' Replace previous result placeholder if exists
+    finalSQL = Replace(finalSQL, "#PREV_RESULT#", prevResultValue)
+
+    ' Set connection string (update with your credentials)
+    Select Case dbType
+        Case "PostgreSQL"
+            connStr = "Driver={PostgreSQL Unicode};Server=your_pg_server;Port=5432;Database=your_pg_db;Uid=your_pg_user;Pwd=your_pg_pass;"
+        Case "DB2"
+            connStr = "Driver={IBM DB2 ODBC DRIVER};Database=your_db2_db;Hostname=your_db2_host;Port=50000;Protocol=TCPIP;Uid=your_db2_user;Pwd=your_db2_pass;"
+        Case Else
+            MsgBox "Unsupported database: " & dbType, vbCritical
+            Exit Sub
+    End Select
+
+    Set conn = CreateObject("ADODB.Connection")
+    Set rs = CreateObject("ADODB.Recordset")
+
+    conn.Open connStr
+    rs.Open finalSQL, conn
+
+    ' Clear output area
+    wsDash.Range("A8:Z1000").ClearContents
+
+    ' Write headers
+    For i = 0 To rs.Fields.Count - 1
+        wsDash.Cells(8, i + 1).Value = rs.Fields(i).Name
+    Next i
+
+    ' Write records
+    wsDash.Range("A9").CopyFromRecordset rs
+
+    ' Store first column value for chaining queries
+    If Not rs.EOF Then
+        prevResultValue = rs.Fields(0).Value
+    Else
+        prevResultValue = ""
+    End If
+
+    rs.Close
+    conn.Close
+    Set rs = Nothing
+    Set conn = Nothing
+
+    MsgBox "Query executed successfully.", vbInformation
+    Exit Sub
+
+ErrHandler:
+    MsgBox "Error: " & Err.Description, vbCritical
+    On Error Resume Next
+    If Not rs Is Nothing Then If rs.State = 1 Then rs.Close
+    If Not conn Is Nothing Then If conn.State = 1 Then conn.Close
+End Sub
+
+Function CountParameters(sql As String) As Integer
+    Dim i As Integer, count As Integer
+    count = 0
+    For i = 1 To 5
+        If InStr(sql, "#P" & i & "#") > 0 Then
+            count = count + 1
+        End If
+    Next i
+    CountParameters = count
+End Function
+
+Private Sub Worksheet_Change(ByVal Target As Range)
+    Dim wsQuery As Worksheet
+    Dim dbSelected As String
+    Dim filteredQueries() As String
+    Dim i As Long
+
+    If Not Intersect(Target, Me.Range("B2")) Is Nothing Then
+        Application.EnableEvents = False
+        Set wsQuery = ThisWorkbook.Sheets("QueryList")
+        dbSelected = Me.Range("B2").Value
+
+        If dbSelected = "" Then
+            Me.Range("B3").Validation.Delete
+            Me.Range("B3").Value = ""
+        Else
+            Dim lastRow As Long
+            lastRow = wsQuery.Cells(wsQuery.Rows.Count, "A").End(xlUp).Row
+
+            ReDim filteredQueries(1 To 1)
+            Dim count As Long
+            count = 0
+
+            For i = 2 To lastRow
+                If wsQuery.Cells(i, 1).Value = dbSelected Then
+                    count = count + 1
+                    ReDim Preserve filteredQueries(1 To count)
+                    filteredQueries(count) = wsQuery.Cells(i, 2).Value
+                End If
+            Next i
+
+            If count = 0 Then
+                Me.Range("B3").Validation.Delete
+                Me.Range("B3").Value = ""
+            Else
+                With Me.Range("B3").Validation
+                    .Delete
+                    .Add Type:=xlValidateList, AlertStyle:=xlValidAlertStop, Operator:=xlBetween, Formula1:=Join(filteredQueries, ",")
+                    .IgnoreBlank = True
+                    .InCellDropdown = True
+                    .ShowInput = True
+                    .ShowError = True
+                End With
+                Me.Range("B3").Value = filteredQueries(1)
+            End If
+        End If
+        Application.EnableEvents = True
+    End If
+End Sub
+'''
+
+def create_excel():
+    # Create a new workbook and add sheets
+    wb = openpyxl.Workbook()
+    ws_dash = wb.active
+    ws_dash.title = "Dashboard"
+    ws_query = wb.create_sheet("QueryList")
+
+    # Setup QueryList headers and sample data
+    ws_query.append(["Database", "QueryName", "SQLQuery"])
+    ws_query.append(["PostgreSQL", "GetEmployees", "SELECT * FROM employees WHERE department = '#P1#'"])
+    ws_query.append(["PostgreSQL", "GetSalaries", "SELECT * FROM salaries WHERE employee_id = '#P1#'"])
+    ws_query.append(["DB2", "ListUsers", "SELECT * FROM users WHERE role = '#P1#'"])
+
+    # Setup Dashboard UI
+    ws_dash["A2"] = "Database"
+    ws_dash["B2"] = ""
+    ws_dash["A3"] = "Query"
+    ws_dash["B3"] = ""
+    for i in range(4, 9):
+        ws_dash[f"A{i}"] = f"Parameter {i-3}"
+        ws_dash[f"B{i}"] = ""
+
+    ws_dash["A9"] = "Output will appear starting below..."
+
+    # Add data validation for database dropdown (B2)
+    dv_db = DataValidation(type="list", formula1='"PostgreSQL,DB2"', allow_blank=False)
+    ws_dash.add_data_validation(dv_db)
+    dv_db.add("B2")
+
+    # Add empty data validation to B3 (will be updated by VBA on db change)
+    # We can set a dummy list for now
+    dv_query = DataValidation(type="list", formula1='"GetEmployees,GetSalaries,ListUsers"', allow_blank=False)
+    ws_dash.add_data_validation(dv_query)
+    dv_query.add("B3")
+
+    # Save as .xlsx first
+    xlsx_file = "Database_Query_Tool.xlsx"
+    wb.save(xlsx_file)
+
+    # Now use xlwings to open and add VBA module and button
+    app = xw.App(visible=False)
+    try:
+        wb_xw = app.books.open(xlsx_file)
+
+        # Add VBA module
+        if "DatabaseModule" in [mod.name for mod in wb_xw.api.VBProject.VBComponents]:
+            mod = wb_xw.api.VBProject.VBComponents("DatabaseModule")
+        else:
+            mod = wb_xw.api.VBProject.VBComponents.Add(1)  # 1=Module
+            mod.Name = "DatabaseModule"
+        mod.CodeModule.AddFromString(vba_code)
+
+        # Add a button linked to RunSelectedQuery macro
+        ws = wb_xw.sheets["Dashboard"]
+        # Add button using Forms control (position approx)
+        left = ws.range("D2").left
+        top = ws.range("D2").top
+        btn = ws.api.Buttons.Add(left, top, 100, 30)
+        btn.Caption = "Run Query"
+        btn.OnAction = "RunSelectedQuery"
+
+        # Save as .xlsm
+        xlsm_file = "Database_Query_Tool.xlsm"
+        wb_xw.save(xlsm_file)
+        wb_xw.close()
+    finally:
+        app.quit()
+
+    print(f"Macro-enabled Excel file created: {xlsm_file}")
+
+if __name__ == "__main__":
+    create_excel()
