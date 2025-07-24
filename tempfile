@@ -1,1 +1,42 @@
+require 'prawn'
+require 'prawn/table'
 
+Prawn::Document.generate("Before_vs_After_X_Gem.pdf") do
+  # Use built-in fonts for better compatibility
+  font_families.update(
+    "CustomFont" => {
+      normal: "#{Prawn::DATADIR}/fonts/Helvetica.afm"
+    }
+  )
+  font "CustomFont"
+
+  text "Before vs After X Gem", size: 24, style: :bold, align: :center
+  move_down 20
+
+  data = [
+    ["▶ Before X Gem", "▶ After X Gem"],
+    ["- Developer buried in messy code", "+ Developer smiling beside shiny X Gem *"],
+    ["- \"Where is that setup logic again?!\"", "+ \"Ahh... clean, reusable setup!\""],
+    ["- 40% extra logic bloated the repo", "+ 40% reduction in prep code"],
+    ["- Inconsistent logic across features", "+ Standardized test data setup"],
+    ["- No code reuse – everything repeated", "+ Reusable gem across teams"],
+    ["- Fixes scattered across feature files", "+ One central gem to update"],
+    ["- High maintenance cost", "+ Easy to scale and maintain"],
+  ]
+
+  table(data, header: true, width: bounds.width) do
+    row(0).font_style = :bold
+    row(0).background_color = 'CCCCCC'
+    cells.padding = 12
+    cells.border_width = 1
+    cells.border_color = '999999'
+    columns(0).text_color = 'AA0000' # Red tone for Before
+    columns(1).text_color = '008800' # Green tone for After
+    self.position = :center
+  end
+
+  move_down 15
+  text "\"One gem to clean them all.\" *", align: :center, style: :italic, size: 12, color: '666666'
+end
+
+puts "PDF created successfully!"
