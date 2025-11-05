@@ -1,0 +1,207 @@
+Sub JiaEndToEndReport()
+  
+  StartTime = Timer
+  Const STR_BOUNDARY As String = "abc123-xyz123"
+  Dim sUrl As String, sRest As String, sIssueNumber As String
+  Dim sFileDataStr As String, sPath As String, sStatus As String
+ 
+  DeleteRange = "C7:k5000"
+  On Error Resume Next
+  Sheets("JiraAPI").Range(DeleteRange).ClearContents
+  Sheets("JiraAPI").Range(DeleteRange).Interior.ColorIndex = 0
+  On Error GoTo 0
+  
+  ''Get the project ID
+  'https://xxcap.atlassian.net/rest/agile/1.0/board/1494
+  jiraProjectIdResponse = ""
+  projectBoardUrl = Sheets("JiraAPI").Cells(1, 4)
+  boardId = Split(projectBoardUrl, "boards/")
+  Call connectJira("https://xxxx.atlassian.net/rest/agile/1.0/board/" & boardId(1), jiraProjectIdResponse)
+  Call fetchProjectID(jiraProjectIdResponse, "projectId", returnProjectID)
+  
+  
+  startAt = 0
+  maxResults = 50
+  
+  'https://xxx.atlassian.net/rest/api/2/search?jql=project=13754&created>=-360 order by created desc&maxResults=0
+  'xxcap.atlassian.net/rest/api/2/search?jql=project=10822&startAt=0&maxResults=50
+  '10822
+  '10527
+  
+
+  For Jloop = 1 To 5
+  
+        jiraResponse = ""
+        getUrl = "https://xx.atlassian.net/rest/api/2/search/jql?jql=project=" & returnProjectID + _
+                 "&startAt=" + _
+                              CStr(startAt) + "&maxResults=" + _
+                              CStr(maxResults) + _
+                               "&fields=key,summary,status,priority,reporter,assignee,created,duedate,labels"
+                              
+       Call connectJira(getUrl, jiraResponse)
+    
+  If Len(jiraResponse) < 100 Then
+     Exit For
+  End If
+  
+
+  Dim oDict As Dictionary
+  Set oDict = ParseJson(jiraResponse)
+    
+   
+   
+   For n = 1 To oDict("issues").Count
+       On Error Resume Next
+       totRows = Sheets("JiraAPI").Range("C" & Sheets("JiraAPI").Rows.Count).End(xlUp).Row
+        Set WB = ThisWorkbook.Sheets("JiraAPI")
+            
+         'Keys
+        WB.Cells(totRows + 1, 3) = oDict("issues")(n)("key")
+        'Summary
+        WB.Cells(totRows + 1, 4) = oDict("issues")(n)("fields")("summary")
+       ''Assignee
+        WB.Cells(totRows + 1, 5) = oDict("issues")(n)("fields")("assignee")("displayName")
+'      ''Reporter
+        WB.Cells(totRows + 1, 6) = oDict("issues")(n)("fields")("reporter")("displayName")
+        ' Status
+        WB.Cells(totRows + 1, 7) = oDict("issues")(n)("fields")("status")("name")
+        
+        'Priority
+        WB.Cells(totRows + 1, 8) = oDict("issues")(n)("fields")("priority")("name")
+         
+        strdate = oDict("issues")(n)("fields")("created")
+        strdateCreated = Split(strdate, "T")
+        
+        WB.Cells(totRows + 1, 9) = strdateCreated(0)
+         
+        WB.Cells(totRows + 1, 10) = oDict("issues")(n)("fields")("duedate")
+        
+        'labels
+        WB.Cells(totRows + 1, 11) = oDict("issues")(n)("fields")("labels")(1)
+     
+    Set WB = Nothing
+  Next n
+  
+  Sheets("JiraAPI").Select
+  startAt = startAt + 50
+  On Error GoTo 0
+Next
+
+
+Dim PivotWs As Worksheet
+Set PivotWs = ActiveWorkbook.Worksheets("JiraStatus")
+'select pivot table and refresh
+PivotWs.Select
+Set PTSuppBase = ActiveSheet.PivotTables("PivotTable1")
+PTSuppBase.RefreshTable
+
+With PTSuppBase
+    .DataBodyRange.HorizontalAlignment = xlLeft
+    '.ColumnRange.HorizontalAlignment = xlLeft
+    .TableStyle2 = "PivotStyleMedium20"
+    .DataBodyRange.WrapText = True
+    .TableRange1.Columns.AutoFit
+End With
+
+
+Call refreshPivot("JiraStatus", "PivotTable1")
+
+
+Sheets("JiraAPI").Select
+
+
+Set oDict = Nothing
+Set oJiraService = Nothing
+
+MinutesElapsed = Format((Timer - StartTime) / 86400, "hh:mm:ss")
+MsgBox "Jira Board data ready execution took " & MinutesElapsed
+
+End Sub
+ 
+ 
+Function EncodeBase64(text$)
+    Dim b
+    With CreateObject("ADODB.Stream")
+        .Open: .Type = 2: .Charset = "utf-8"
+        .WriteText text: .Position = 0: .Type = 1: b = .Read
+        With CreateObject("Microsoft.XMLDOM").createElement("b64")
+            .DataType = "bin.base64": .nodeTypedValue = b
+            EncodeBase64 = Replace(Mid(.text, 5), vbLf, "")
+        End With
+        .Close
+    End With
+End Function
+
+
+
+Function refreshPivot(sheetName, PivotTableName)
+    Dim PivotWs As Worksheet
+    Set PivotWs = Sheets(sheetName)
+    'select pivot table and refresh
+    PivotWs.Select
+    Set PTSuppBase = ActiveSheet.PivotTables(PivotTableName)
+    PTSuppBase.RefreshTable
+    
+    With PTSuppBase
+        .DataBodyRange.HorizontalAlignment = xlLeft
+        '.ColumnRange.HorizontalAlignment = xlLeft
+        .TableStyle2 = "PivotStyleMedium20"
+        .DataBodyRange.WrapText = True
+        .TableRange1.Columns.AutoFit
+    End With
+End Function
+
+Public Function connectJira(ByVal getUrl, ByRef jiraResponse)
+
+    Set oJiraService = New MSXML2.ServerXMLHTTP60
+    
+    With oJiraService
+       UserName = "rxx"
+       token = "xx"
+       On Error Resume Next
+      .Open "GET", getUrl, False
+      .setRequestHeader "Content-Type", "application/json"
+      .setRequestHeader "Accept", "application/json"
+      .setRequestHeader "Authorization", "Basic " & EncodeBase64(UserName & ":" & token)
+       .send
+      sRest = .responseText
+      MsgBox sRest
+      sStatus = .Status & " | " & .statusText
+      MsgBox sStatus
+    End With
+    On Error GoTo 0
+
+jiraResponse = sRest
+End Function
+
+
+Function fetchProjectID(ByVal strText, ByVal strCheck, ByRef returnProjectID)
+    Dim objRegexp As RegExp
+    Set objRegexp = New RegExp
+    objRegexp.IgnoreCase = True
+    objRegexp.Global = True
+    strcheckexpression = "" & strCheck & """" & ":([\s\S]+?),"
+    objRegexp.Pattern = strcheckexpression
+    Set matches = objRegexp.Execute(strText)
+    For Each Match In matches
+        strReturnValue = Match.Value
+    Next
+      If strReturnValue <> "" Then
+         iD = Replace(strReturnValue, "projectId", "")
+         iD = Replace(iD, ":", "")
+         iD = Replace(iD, ",", "")
+         iD = Replace(iD, """", "")
+         iD = Replace(iD, " ", "")
+        strReturnResult = iD
+    End If
+    Set objRegexp = Nothing
+    returnProjectID = strReturnResult
+End Function
+
+
+
+
+
+
+
+
