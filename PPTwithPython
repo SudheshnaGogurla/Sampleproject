@@ -1,0 +1,144 @@
+from pptx import Presentation
+from pptx.util import Inches, Pt
+from pptx.dml.color import RGBColor
+
+# -------------------------
+# Create Presentation
+# -------------------------
+prs = Presentation()
+
+# Define a simple Tech Blue color
+BLUE = RGBColor(0, 102, 204)
+BLACK = RGBColor(0, 0, 0)
+
+# Helper function to add a slide
+def add_slide(title, bullets):
+    slide_layout = prs.slide_layouts[1]  # Title & Content
+    slide = prs.slides.add_slide(slide_layout)
+    slide.shapes.title.text = title
+    body = slide.shapes.placeholders[1].text_frame
+    body.clear()
+    for bullet in bullets:
+        p = body.add_paragraph()
+        p.text = bullet
+        p.font.size = Pt(18)
+        p.font.color.rgb = BLACK
+
+# -------------------------
+# Slides
+# -------------------------
+# Slide 1: Title
+slide_layout = prs.slide_layouts[0]
+slide = prs.slides.add_slide(slide_layout)
+slide.shapes.title.text = "End-to-End Testing with Cucumber + Playwright"
+slide.placeholders[1].text = "A modern BDD framework using Playwright, Cucumber.js, and TypeScript"
+
+# Slide 2: What is this Framework
+add_slide(
+    "What is this Framework?",
+    [
+        "✅ Behavior Driven Development (Cucumber.js)",
+        "✅ Browser automation with Playwright (Chromium, Firefox, WebKit)",
+        "✅ Written in TypeScript for type-safety and maintainability",
+        "✅ Built-in HTML/JSON reports, videos, and traces",
+        "✅ Ideal for demos and CI/CD automation"
+    ]
+)
+
+# Slide 3: Framework Structure
+add_slide(
+    "Framework Structure Overview",
+    [
+        "features/ → Gherkin feature files",
+        "tests/step-definitions/ → Step definitions using Playwright",
+        "support/ → Hooks, custom world, configuration",
+        "reports/ → HTML/JSON output reports",
+        ".env → Base URL, browser config, etc."
+    ]
+)
+
+# Slide 4: Installation & Demo Setup
+add_slide(
+    "Installation & Demo Setup",
+    [
+        "1️⃣ Clone the repository: git clone https://github.com/ahmadmg/cucumberjs-playwright.git",
+        "cd cucumberjs-playwright",
+        "2️⃣ Install dependencies: npm install",
+        "3️⃣ Configure environment: cp .env.example .env",
+        "4️⃣ Run demo tests: npx cucumber-js"
+    ]
+)
+
+# Slide 5: Selenium vs Playwright
+add_slide(
+    "Selenium vs Playwright — Key Differences",
+    [
+        "🔹 Selenium: Uses WebDriver protocol → slower, less stable",
+        "🔹 Playwright: Talks directly to browsers → faster & more reliable",
+        "🔹 Selenium: Manual waits → Playwright auto-waits",
+        "🔹 Playwright supports tracing, video, network mocking natively",
+        "🔹 No need for drivers → Playwright downloads browsers automatically"
+    ]
+)
+
+# Slide 6: Playwright Cheat Sheet – Basic Commands
+add_slide(
+    "Playwright Cheat Sheet – Basic Commands",
+    [
+        "Launch Browser: const browser = await chromium.launch({ headless: false })",
+        "Navigation & Actions: await page.goto('https://example.com')",
+        "await page.fill('#username', 'admin')",
+        "await page.click('text=Login')",
+        "Assertions: await expect(page).toHaveURL(/dashboard/)"
+    ]
+)
+
+# Slide 7: Playwright Cheat Sheet – Advanced Methods
+add_slide(
+    "Playwright Cheat Sheet – Advanced",
+    [
+        "Intercept API calls: await page.route('**/api/*', route => route.abort())",
+        "Mock responses: await page.route('**/api/user', route => route.fulfill({ status: 200, body: JSON.stringify({name: 'John'}) }))",
+        "Screenshots & Traces: await page.screenshot({ path: 'page.png', fullPage: true })",
+        "await context.tracing.start({ screenshots: true })"
+    ]
+)
+
+# Slide 8: Demo Notes & Tips
+add_slide(
+    "Demo Notes & Tips",
+    [
+        "✅ Use headless=false to show browser actions live",
+        "✅ Open sample feature (features/example.feature)",
+        "✅ Show matching step file (tests/step-definitions/)",
+        "✅ Run npm test → show BDD output & report",
+        "✅ Reports generated in reports/report.html"
+    ]
+)
+
+# Slide 9: Summary
+add_slide(
+    "Summary",
+    [
+        "🚀 Ready-to-use Playwright + Cucumber test automation template",
+        "📦 Built with TypeScript, Playwright, and Cucumber.js",
+        "📊 Generates reports, videos, and traces automatically",
+        "💡 Ideal for quick demos or integration into CI/CD pipelines"
+    ]
+)
+
+# Slide 10: Q&A / References
+add_slide(
+    "Q&A / References",
+    [
+        "📘 Repository: https://github.com/ahmadmg/cucumberjs-playwright",
+        "💬 Ask questions or extend the framework!",
+        "Thank you!"
+    ]
+)
+
+# -------------------------
+# Save Presentation
+# -------------------------
+prs.save("Cucumber_Playwright_Demo.pptx")
+print("✅ PowerPoint created: Cucumber_Playwright_Demo.pptx")
